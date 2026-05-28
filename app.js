@@ -5,6 +5,7 @@ let currentBrandCode = 'all';   // Código de marca filtrado
 let searchQuery = '';           // Búsqueda por texto
 let isProfessional = false;     // Si ve precios profesionales
 let deliveryMethod = 'retiro';  // Método de entrega: 'retiro' o 'envio'
+let paymentMethod = 'efectivo'; // Método de pago: 'efectivo' o 'transferencia'
 
 let toastTimer;
 let renderedCount = 40;         // Cantidad renderizada (para Lazy Loading)
@@ -303,6 +304,19 @@ function applyFilters() {
 function filterCat(cat) {
   currentCat = cat;
   
+  // Limpiar búsqueda al cambiar de categoría para evitar que no devuelva resultados
+  searchQuery = '';
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.value = '';
+  }
+  
+  // Al cambiar de categoría, restablecemos la marca a "Todas" para evitar listas vacías
+  currentBrandCode = 'all';
+  document.querySelectorAll('.brand-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.code === 'all');
+  });
+  
   // Actualizar clases activas en categorías
   document.querySelectorAll('.cat-pill').forEach(p => {
     p.classList.toggle('active', p.dataset.cat === cat);
@@ -314,6 +328,19 @@ function filterCat(cat) {
 function filterBrand(brandCode, event) {
   if (event) event.stopPropagation();
   currentBrandCode = brandCode;
+  
+  // Limpiar búsqueda al cambiar de marca
+  searchQuery = '';
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.value = '';
+  }
+  
+  // Al cambiar de marca, restablecemos la categoría a "Todos" para ver todos los productos de esa marca
+  currentCat = 'todos';
+  document.querySelectorAll('.cat-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.cat === 'todos');
+  });
   
   // Actualizar clases activas en marcas
   document.querySelectorAll('.brand-pill').forEach(p => {
@@ -327,6 +354,21 @@ function handleSearch() {
   const input = document.getElementById('searchInput');
   if (input) {
     searchQuery = input.value.trim();
+    
+    // Si hay una búsqueda activa, restablecemos categoría y marca a "Todos"
+    // para buscar en todo el catálogo y evitar confusión o listas vacías
+    if (searchQuery) {
+      currentCat = 'todos';
+      currentBrandCode = 'all';
+      
+      document.querySelectorAll('.cat-pill').forEach(p => {
+        p.classList.toggle('active', p.dataset.cat === 'todos');
+      });
+      document.querySelectorAll('.brand-pill').forEach(p => {
+        p.classList.toggle('active', p.dataset.code === 'all');
+      });
+    }
+    
     applyFilters();
   }
 }
@@ -895,5 +937,9 @@ function closeProductModal() {
   }
 }
 
-// Iniciar aplicación al cargar
-window.addEventListener('DOMContentLoaded', init);
+// Iniciar aplicación al cargar con resguardo para estados ya cargados
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
