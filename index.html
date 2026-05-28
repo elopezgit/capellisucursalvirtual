@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Club Capelli - Sucursal Virtual Premium</title>
+
+  <!-- FUENTES DE LUXE: Playfair Display para títulos, Outfit para cuerpo -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <!-- PANTALLA DE CARGA / SPLASH SCREEN CINEMATOGRÁFICO -->
+  <div id="splash">
+    <div class="sp-content">
+      <div class="sp-logo-container">
+        <img src="img/logo/capellilogo.png" alt="Club Capelli" class="sp-logo">
+        <div class="sp-light-flare"></div>
+      </div>
+      <div class="sp-hotel-name">Club Capelli</div>
+      <div class="sp-tagline">SUCURSAL VIRTUAL PREMIUM</div>
+      <div class="sp-loader">
+        <div class="sp-loader-inner"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENEDOR PRINCIPAL DE LA APLICACIÓN -->
+  <div id="app">
+
+    <!-- NAVBAR SUPERIOR GLASSMORPHIC -->
+    <header class="header">
+      <div class="header-inner">
+        <div class="brand-block">
+          <img src="img/logo/capellilogo.png" alt="Club Capelli" class="header-mini-logo">
+          <div class="brand-info">
+            <div class="brand-greeting">
+              <span class="status-indicator-dot open"></span>
+              <span id="storeStatusText">Sucursal Tucumán · Catálogo Abierto</span>
+            </div>
+            <div class="brand-title">Club Capelli</div>
+          </div>
+        </div>
+
+        <!-- TOGGLE PROFESIONAL EXCLUSIVO -->
+        <div class="toggle-prof-wrap">
+          <span class="toggle-prof-label">¿Sos Profesional?</span>
+          <label class="switch-premium">
+            <input type="checkbox" id="profToggle" onchange="toggleProfessionalMode(this.checked)">
+            <span class="slider-premium"></span>
+          </label>
+        </div>
+
+        <button class="cart-fab" onclick="openCart()" id="cartFab">
+          <span class="cart-fab-icon">🛒</span>
+          <div class="cart-count" id="cartCount">0</div>
+        </button>
+      </div>
+
+      <!-- BARRA DE BÚSQUEDA EXCLUSIVA -->
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Buscá por producto, marca (ej: Wella, Idraet), código (ej: O69138)..." id="searchInput"
+          oninput="handleSearch()">
+      </div>
+    </header>
+
+    <!-- SELECTOR DE CATEGORÍAS GOURMET -->
+    <div class="cats-wrap fade-section" id="fsCats">
+      <div class="section-label-center">
+        <span class="gold-subtitle">DISTRIBUIDOR LÍDER DE BELLEZA</span>
+        <h2>Líneas y Productos</h2>
+      </div>
+      <div class="cats-scroll" id="catScroll">
+        <div class="cat-pill active" onclick="filterCat('todos')" data-cat="todos"><span>🌟</span>Todos</div>
+        <div class="cat-pill" onclick="filterCat('capilar')" data-cat="capilar"><span>💇</span>Capilar</div>
+        <div class="cat-pill" onclick="filterCat('unas')" data-cat="unas"><span>💅</span>Manicuría y Uñas</div>
+        <div class="cat-pill" onclick="filterCat('skincare')" data-cat="skincare"><span>🧴</span>Skincare y Estética</div>
+        <div class="cat-pill" onclick="filterCat('herramientas')" data-cat="herramientas"><span>✂️</span>Herramientas y Eléctricos</div>
+        <div class="cat-pill" onclick="filterCat('maquillaje')" data-cat="maquillaje"><span>💄</span>Maquillaje</div>
+        <div class="cat-pill" onclick="filterCat('accesorios')" data-cat="accesorios"><span>🎗️</span>Accesorios y Varios</div>
+      </div>
+    </div>
+
+    <!-- SECTOR DE FILTRADO POR MARCAS POPULARES -->
+    <div class="brands-wrap fade-section" id="fsBrands">
+      <div class="section-label-brands">🔍 Filtrar por Marca Popular:</div>
+      <div class="brands-scroll" id="brandScroll">
+        <!-- Se genera dinámicamente en app.js -->
+      </div>
+    </div>
+
+    <!-- LISTA DE PRODUCTOS / CARTA GOURMET -->
+    <div class="menu-wrap fade-section" id="fsMenu">
+      <div class="section-label" id="menuTitle">🍽️ Selección Completa</div>
+      <div class="menu-list" id="menuList"></div>
+      
+      <!-- SENTINEL LOADER PARA INFINITE SCROLL -->
+      <div id="sentinelLoader" class="sentinel-loader" style="display: none;">
+        <div class="loader-spinner"></div>
+        <span>Cargando más productos...</span>
+      </div>
+    </div>
+
+    <!-- FOOTER INSTITUCIONAL ELEGANTE Y MINIMALISTA -->
+    <footer class="app-footer fade-section" id="fsFooter">
+      <div class="footer-minimal-content">
+        <span class="footer-mini-title">Club Capelli</span>
+        <div class="footer-mini-links">
+          <a href="https://clubcapelli.com.ar/" target="_blank">🌐 Web Oficial</a>
+          <span>•</span>
+          <a href="https://instagram.com/clubcapelli" target="_blank">📸 Instagram</a>
+          <span>•</span>
+          <a href="tel:3814484845">📲 Contacto Directo</a>
+        </div>
+        <div class="footer-copyright">
+          &copy; 2026 Club Capelli - Distribuidora y Sucursal Virtual Tucumán.
+        </div>
+      </div>
+    </footer>
+
+    <div style="height:100px"></div>
+  </div>
+
+  <!-- BARRA FIJA INFERIOR (RESUMEN DEL PEDIDO) -->
+  <div class="bottom-bar">
+    <button class="order-btn disabled" id="orderBtn" onclick="openCart()">
+      <div class="order-btn-left">
+        <div class="order-btn-count" id="btnCount">0</div>
+        <span>Ver Mi Pedido / Checkout</span>
+      </div>
+      <div class="order-btn-total" id="btnTotal">$0</div>
+    </button>
+  </div>
+
+  <!-- PANEL DEL CARRITO Y CHECKOUT PREMIUM -->
+  <div class="panel-overlay" id="panelOverlay" onclick="closeCart()"></div>
+  <div class="panel" id="cartPanel">
+    <div class="panel-header-wrap">
+      <div class="panel-handle"></div>
+      <div class="panel-title">
+        <span>Resumen de Compra</span>
+        <button class="panel-close" onclick="closeCart()">✕</button>
+      </div>
+    </div>
+
+    <!-- Cart Content Area (dynamic) -->
+    <div class="panel-scroll-area">
+      <div class="room-service-exclusive-banner">
+        <span class="rse-icon">🛍️</span>
+        <div class="rse-text-box">
+          <div class="rse-title">Club Capelli Tucumán</div>
+          <div class="rse-sub">Insumos profesionales para el salón y el hogar</div>
+        </div>
+      </div>
+
+      <!-- Alerta de Tipo de Precio aplicado -->
+      <div id="priceTierAlert" class="price-tier-alert-box">
+        <span class="price-tier-icon">🏷️</span>
+        <span id="priceTierAlertText">Precios Públicos Aplicados</span>
+      </div>
+
+      <div id="cartContent"></div>
+
+      <div id="cartForm" style="display:none" class="cart-form-container">
+        <div class="form-divider">📝 DATOS PARA SU PEDIDO</div>
+
+        <div class="form-grid">
+          <!-- Tipo de Entrega -->
+          <div class="form-section full-width">
+            <label class="form-label highlighted">Método de Entrega *</label>
+            <div class="delivery-toggle-wrap">
+              <button type="button" class="delivery-btn active" id="btnRetiro" onclick="setDeliveryMethod('retiro')">🏢 Retiro en Sucursal</button>
+              <button type="button" class="delivery-btn" id="btnEnvio" onclick="setDeliveryMethod('envio')">🚚 Envío a Domicilio</button>
+            </div>
+            <input type="hidden" id="fDeliveryMethod" value="retiro">
+          </div>
+
+          <!-- Selector de Sucursales (Retiro) -->
+          <div class="form-section full-width" id="secRetiro">
+            <label class="form-label">Seleccionar Sucursal de Retiro *</label>
+            <select class="form-input" id="fSucursal">
+              <!-- Se cargará desde data.js en init -->
+            </select>
+          </div>
+
+          <!-- Campos de Dirección (Envío) -->
+          <div class="form-section full-width" id="secEnvio" style="display:none;">
+            <div class="form-grid-inner">
+              <div style="flex:1;">
+                <label class="form-label">Dirección (Calle y Altura) *</label>
+                <input class="form-input" type="text" id="fDireccion" placeholder="Ej: Av. Sarmiento 123">
+              </div>
+              <div style="flex:1;">
+                <label class="form-label">Ciudad / Localidad *</label>
+                <input class="form-input" type="text" id="fLocalidad" placeholder="Ej: Yerba Buena">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <label class="form-label">Nombre *</label>
+            <input class="form-input" type="text" id="fNombre" placeholder="Nombre" required>
+          </div>
+
+          <div class="form-section">
+            <label class="form-label">Apellido *</label>
+            <input class="form-input" type="text" id="fApellido" placeholder="Apellido" required>
+          </div>
+
+          <div class="form-section">
+            <label class="form-label">Correo Electrónico *</label>
+            <input class="form-input" type="email" id="fEmail" placeholder="ejemplo@correo.com" required>
+          </div>
+
+          <div class="form-section">
+            <label class="form-label">Teléfono Celular *</label>
+            <input class="form-input" type="tel" id="fTel" placeholder="Ej: 3815000774" required>
+          </div>
+
+          <!-- Campo Profesional Adicional -->
+          <div class="form-section full-width" id="secProfesion" style="display:none;">
+            <label class="form-label highlighted">Nombre del Salón / Profesión *</label>
+            <input class="form-input" type="text" id="fProfesion" placeholder="Ej: Salón Estilo / Colorista Independiente">
+          </div>
+
+          <!-- Medio de Pago -->
+          <div class="form-section full-width">
+            <label class="form-label highlighted">Medio de Pago *</label>
+            <div class="payment-toggle-wrap">
+              <button type="button" class="payment-btn active" id="btnPagoEfectivo" onclick="setPaymentMethod('efectivo')">💵 Efectivo</button>
+              <button type="button" class="payment-btn" id="btnPagoTransferencia" onclick="setPaymentMethod('transferencia')">🏦 Transferencia Bancaria</button>
+            </div>
+            <input type="hidden" id="fPaymentMethod" value="efectivo">
+          </div>
+
+          <!-- Detalles Pago Efectivo -->
+          <div class="form-section full-width" id="secEfectivo">
+            <label class="form-label">¿Con cuánto vas a pagar? (Para calcular tu vuelto) *</label>
+            <div class="cash-input-wrap">
+              <span class="cash-currency-symbol">$</span>
+              <input class="form-input cash-input" type="number" id="fEfectivoConCuanto" placeholder="Ej: 50000 o deja vacío si pagas justo" oninput="calculateChange()">
+            </div>
+            <div class="cash-change-result" id="cashChangeResult" style="display:none;"></div>
+          </div>
+
+          <!-- Detalles Pago Transferencia -->
+          <div class="form-section full-width" id="secTransferencia" style="display:none;">
+            <div class="transfer-info-card">
+              <div class="tic-header">ℹ️ Datos para la Transferencia</div>
+              <div class="tic-body">
+                <p><strong>Alias:</strong> <span id="transferAliasText" style="user-select: all; font-weight:700; background:rgba(230,95,0,0.1); padding:2px 6px; border-radius:4px; color:var(--primary);">CAPELLI.TUC.MP</span></p>
+                <p><strong>Titular:</strong> Club Capelli S.A.S.</p>
+                <p><strong>CVU:</strong> 0000003100023456789012</p>
+                <p><strong>Banco:</strong> Mercado Pago</p>
+              </div>
+              <button type="button" class="copy-alias-btn" onclick="copyAlias()">📋 Copiar Alias</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <label class="form-label">Observaciones o Notas Especiales (opcional)</label>
+          <textarea class="notes-input" id="fNota"
+            placeholder="Ej: prefiero tintura Wella número 5.3, envolver para regalo, etc."></textarea>
+        </div>
+
+        <button class="wa-btn" onclick="sendWhatsApp()">
+          <span class="wa-icon">🛒</span>
+          Enviar Pedido por WhatsApp
+        </button>
+        <p class="form-secure-note">
+          🔒 Los precios y stock serán confirmados de forma definitiva por un asesor de Club Capelli al recibir tu WhatsApp.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL INFORMATIVO DE DETALLE DE PLATO (GOURMET DETAIL MODAL) -->
+  <div class="product-modal-overlay" id="productModalOverlay" onclick="closeProductModal()"></div>
+  <div class="product-modal" id="productModal">
+    <button class="pm-close-btn" onclick="closeProductModal()">✕</button>
+    <div class="pm-image-wrap" id="pmImageWrap"></div>
+    <div class="pm-content-wrap">
+      <div class="pm-header">
+        <span class="pm-category" id="pmCategory">CATEGORÍA</span>
+        <h2 class="pm-title" id="pmTitle">Nombre del Producto</h2>
+      </div>
+      <div class="pm-rating-row">
+        <span class="pm-stars">★★★★★</span>
+        <span class="pm-rating-value">Código: ---</span>
+      </div>
+      <p class="pm-desc" id="pmDesc">Contenido del producto...</p>
+      
+      <div class="pm-info-section" id="pmIngredientsSection">
+        <span class="pm-section-title">🏭 Marca / Distribución</span>
+        <p class="pm-ingredients" id="pmIngredients">Marca...</p>
+      </div>
+      
+      <div class="pm-price-row">
+        <span class="pm-price-label">Precio Sugerido</span>
+        <span class="pm-price-value" id="pmPrice">$--</span>
+      </div>
+      
+      <button class="pm-back-btn" onclick="closeProductModal()">Volver al Catálogo 🛒</button>
+    </div>
+  </div>
+
+  <!-- NOTIFICACIÓN TIPO TOAST PREMIUM -->
+  <div class="toast" id="toast"></div>
+
+  <!-- SCRIPTS DE CARGA -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+
+</body>
+
+</html>
