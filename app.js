@@ -809,7 +809,7 @@ function init() {
   if (splash) {
     setTimeout(() => {
       splash.classList.add('fade-out');
-    }, 1800); // 1.8 segundos para una entrada cinematográfica
+    }, 4200); // 4.2 segundos para una entrada y presentación cinematográfica completa
   }
   
   // Cargar dropdown e inicializar listado de productos

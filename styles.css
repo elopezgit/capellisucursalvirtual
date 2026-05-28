@@ -75,12 +75,12 @@ h1, h2, h3, h4 {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(135deg, #121212 0%, #301602 100%);
+  background: radial-gradient(circle, #ffffff 0%, #fffbf9 60%, #ffebe0 100%);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  transition: opacity 0.8s cubic-bezier(0.77, 0, 0.175, 1), visibility 0.8s;
+  transition: opacity 1.2s cubic-bezier(0.77, 0, 0.175, 1), visibility 1.2s;
   overflow: hidden;
 }
 
@@ -97,105 +97,154 @@ h1, h2, h3, h4 {
   align-items: center;
   justify-content: center;
   max-width: 90%;
+  width: 600px;
 }
 
 .sp-logo-container {
   position: relative;
-  width: 180px;
-  height: 180px;
-  margin-bottom: 25px;
+  width: 200px;
+  height: 200px;
+  margin-bottom: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: logoEntrance 1.6s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  animation: logoZoomSlow 4s cubic-bezier(0.1, 0.8, 0.1, 1) forwards;
 }
 
 .sp-logo {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 8px 20px rgba(230, 95, 0, 0.12));
 }
 
 .sp-light-flare {
   position: absolute;
   top: 0;
   left: -150%;
-  width: 50%;
+  width: 60%;
   height: 100%;
-  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 50%, rgba(255,255,255,0) 100%);
   transform: skewX(-25deg);
   animation: shineFlare 3s ease-in-out infinite;
-  animation-delay: 1s;
+  animation-delay: 1.2s;
 }
 
-.sp-hotel-name {
-  font-family: var(--font-serif);
-  font-size: 2rem;
-  color: var(--text-light);
-  margin-bottom: 10px;
-  letter-spacing: 0.05em;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.5s;
+/* Secuencia de textos coreografiados */
+.sp-text-sequence {
+  margin: 15px 0 35px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
 }
 
-.sp-tagline {
-  font-size: 0.8rem;
-  color: var(--accent);
-  letter-spacing: 0.25em;
-  font-weight: 600;
+.sp-seq-line1 {
+  font-size: 0.78rem;
+  color: var(--primary);
+  font-weight: 700;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
-  margin-bottom: 40px;
   opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.7s;
+  transform: translateX(-60px);
+  animation: slideFromLeft 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 0.4s;
+  font-family: var(--font-sans);
+}
+
+.sp-seq-line2 {
+  font-family: var(--font-serif);
+  font-size: 3.2rem;
+  color: var(--accent);
+  font-weight: 800;
+  margin: 5px 0;
+  opacity: 0;
+  transform: scale(0.92);
+  animation: softScaleUp 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 0.9s;
+  text-shadow: 0 4px 15px rgba(230, 95, 0, 0.08);
+}
+
+.sp-seq-line3 {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  max-width: 480px;
+  line-height: 1.6;
+  text-align: center;
+  opacity: 0;
+  transform: translateX(60px);
+  animation: slideFromRight 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 1.4s;
+  font-family: var(--font-sans);
 }
 
 .sp-loader {
-  width: 150px;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 1px;
+  width: 180px;
+  height: 3px;
+  background: rgba(230, 95, 0, 0.1);
+  border-radius: 2px;
   overflow: hidden;
   opacity: 0;
-  animation: fadeIn 0.8s ease forwards 0.9s;
+  animation: fadeIn 0.8s ease forwards 1.2s;
 }
 
 .sp-loader-inner {
   height: 100%;
-  background: var(--accent);
+  background: var(--primary);
   width: 0%;
-  animation: fillLoader 2.2s cubic-bezier(0.1, 0.8, 0.1, 1) forwards;
+  animation: fillLoader 4.2s cubic-bezier(0.1, 0.8, 0.1, 1) forwards;
 }
 
-/* ── animaciones splash ── */
-@keyframes logoEntrance {
+/* ── animaciones splash cinematográficas ── */
+@keyframes logoZoomSlow {
   0% {
-    transform: scale(0.7) translateY(-30px);
+    transform: scale(0.85);
     opacity: 0;
   }
+  30% {
+    opacity: 1;
+  }
   100% {
-    transform: scale(1) translateY(0);
+    transform: scale(1.05);
     opacity: 1;
   }
 }
-@keyframes fadeInUp {
+
+@keyframes slideFromLeft {
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
   }
 }
+
+@keyframes softScaleUp {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideFromRight {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 @keyframes fadeIn {
   to {
     opacity: 1;
   }
 }
+
 @keyframes fillLoader {
   to {
     width: 100%;
   }
 }
+
 @keyframes shineFlare {
   0% { left: -150%; }
   50% { left: 150%; }
