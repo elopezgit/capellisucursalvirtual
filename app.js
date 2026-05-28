@@ -304,18 +304,12 @@ function applyFilters() {
 function filterCat(cat) {
   currentCat = cat;
   
-  // Limpiar búsqueda al cambiar de categoría para evitar que no devuelva resultados
+  // Limpiar búsqueda por texto al cambiar de categoría para evitar conflictos
   searchQuery = '';
   const searchInput = document.getElementById('searchInput');
   if (searchInput) {
     searchInput.value = '';
   }
-  
-  // Al cambiar de categoría, restablecemos la marca a "Todas" para evitar listas vacías
-  currentBrandCode = 'all';
-  document.querySelectorAll('.brand-pill').forEach(p => {
-    p.classList.toggle('active', p.dataset.code === 'all');
-  });
   
   // Actualizar clases activas en categorías
   document.querySelectorAll('.cat-pill').forEach(p => {
@@ -329,18 +323,12 @@ function filterBrand(brandCode, event) {
   if (event) event.stopPropagation();
   currentBrandCode = brandCode;
   
-  // Limpiar búsqueda al cambiar de marca
+  // Limpiar búsqueda por texto al cambiar de marca para evitar conflictos
   searchQuery = '';
   const searchInput = document.getElementById('searchInput');
   if (searchInput) {
     searchInput.value = '';
   }
-  
-  // Al cambiar de marca, restablecemos la categoría a "Todos" para ver todos los productos de esa marca
-  currentCat = 'todos';
-  document.querySelectorAll('.cat-pill').forEach(p => {
-    p.classList.toggle('active', p.dataset.cat === 'todos');
-  });
   
   // Actualizar clases activas en marcas
   document.querySelectorAll('.brand-pill').forEach(p => {
@@ -354,21 +342,6 @@ function handleSearch() {
   const input = document.getElementById('searchInput');
   if (input) {
     searchQuery = input.value.trim();
-    
-    // Si hay una búsqueda activa, restablecemos categoría y marca a "Todos"
-    // para buscar en todo el catálogo y evitar confusión o listas vacías
-    if (searchQuery) {
-      currentCat = 'todos';
-      currentBrandCode = 'all';
-      
-      document.querySelectorAll('.cat-pill').forEach(p => {
-        p.classList.toggle('active', p.dataset.cat === 'todos');
-      });
-      document.querySelectorAll('.brand-pill').forEach(p => {
-        p.classList.toggle('active', p.dataset.code === 'all');
-      });
-    }
-    
     applyFilters();
   }
 }
