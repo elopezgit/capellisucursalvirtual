@@ -816,10 +816,11 @@ function init() {
   loadSucursalesDropdown();
   renderBrandPills();
   
-  // Establecer filteredItems por defecto y renderizar
-  filteredItems = MENU;
-  renderFilteredMenu();
-  updateSentinelVisibility();
+  // Inicializar filtros en modo "Todos los productos y categorías"
+  currentCat = 'todos';
+  currentBrandCode = 'all';
+  searchQuery = '';
+  applyFilters();
   
   // Setup Scroll e Intersecciones
   setupInfiniteScroll();
