@@ -1819,8 +1819,8 @@ h1, h2, h3, h4 {
 
 /* ── skeleton loader general ── */
 .fade-section {
-  opacity: 0;
-  transform: translateY(20px);
+  opacity: 1;
+  transform: translateY(0);
   transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
