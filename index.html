@@ -62,18 +62,25 @@
           </label>
         </div>
 
-        <button class="cart-fab" onclick="openCart()" id="cartFab">
-          <span class="cart-fab-icon">🛒</span>
-          <div class="cart-count" id="cartCount">0</div>
-        </button>
+        <div class="header-actions-wrap" style="display: flex; align-items: center; gap: 12px;">
+          <!-- CONMUTADOR DE TEMA ELITE (MODO OSCURO) -->
+          <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Cambiar Tema">🌙</button>
+
+          <button class="cart-fab" onclick="openCart()" id="cartFab">
+            <span class="cart-fab-icon">🛒</span>
+            <div class="cart-count" id="cartCount">0</div>
+          </button>
+        </div>
       </div>
 
-      <!-- BARRA DE BÚSQUEDA EXCLUSIVA -->
-      <div class="search-bar">
+      <!-- BARRA DE BÚSQUEDA EXCLUSIVA CON VOZ Y AUTOCOMPLETE -->
+      <div class="search-bar" style="position: relative;">
         <span class="search-icon">🔍</span>
         <input type="text" placeholder="Buscá por producto, marca (ej: Wella, Idraet), código (ej: O69138)..." id="searchInput"
           oninput="handleSearch()">
+        <button class="voice-btn" id="voiceBtn" onclick="startVoiceSearch(event)" title="Buscar por voz" style="position: absolute; right: 38px; background: transparent; border: none; font-size: 1.15rem; cursor: pointer; color: var(--primary); outline: none; z-index: 10; display: flex; align-items: center; justify-content: center; height: 100%;">🎙️</button>
       </div>
+      <div class="search-suggestions" id="searchSuggestions" style="display:none"></div>
     </header>
 
     <!-- BANNER PROMO HERO ESTILO PEDIDOSYA -->
@@ -165,6 +172,13 @@
 
     <!-- LISTA DE PRODUCTOS / CARTA GOURMET -->
     <div class="menu-wrap fade-section" id="fsMenu">
+      <!-- QUICK TAG FILTERS (Filtros Rápidos por Etiquetas) -->
+      <div class="quick-tags-wrap" id="quickTags">
+        <button class="tag-pill" onclick="filterMenuByTag('popular', event)" data-tag="popular">🔥 Populares</button>
+        <button class="tag-pill" onclick="filterMenuByTag('oferta', event)" data-tag="oferta">💰 Ofertas</button>
+        <button class="tag-pill" onclick="filterMenuByTag('premium', event)" data-tag="premium">⭐ Premium</button>
+        <button class="tag-pill" onclick="filterMenuByTag('vegano', event)" data-tag="vegano">🌿 Natural / Vegano</button>
+      </div>
       <div class="section-label" id="menuTitle">🍽️ Selección Completa</div>
       <div class="menu-list" id="menuList"></div>
       
@@ -376,6 +390,45 @@
       </div>
       
       <button class="pm-back-btn" onclick="closeProductModal()">Volver al Catálogo 🛒</button>
+    </div>
+  </div>
+
+  <!-- MODAL RECIBO DIGITAL INTERACTIVO (TICKET SIMULADOR) -->
+  <div class="receipt-overlay" id="receiptOverlay" onclick="closeReceiptModal()"></div>
+  <div class="receipt-modal" id="receiptModal">
+    <div class="receipt-paper" id="receiptPaper">
+      <div class="receipt-header">
+        <div class="receipt-logo">CLUB CAPELLI</div>
+        <div class="receipt-subtitle">Sucursal Yerba Buena Premium</div>
+        <div class="receipt-address">Av. Aconquija y Lobo de la Vega</div>
+        <div class="receipt-divider"></div>
+      </div>
+      <div class="receipt-meta">
+        <div class="receipt-meta-row"><span>PEDIDO:</span><span id="recId">#CC-XXXX-XXXX</span></div>
+        <div class="receipt-meta-row"><span>FECHA:</span><span id="recDate">--/--/---- --:--</span></div>
+        <div class="receipt-meta-row"><span>CLIENTE:</span><span id="recName">--</span></div>
+        <div class="receipt-meta-row"><span>TELÉFONO:</span><span id="recTel">--</span></div>
+        <div class="receipt-meta-row"><span>MODALIDAD:</span><span id="recDelivery">--</span></div>
+        <div class="receipt-divider"></div>
+      </div>
+      <div class="receipt-items-container" id="recItems">
+        <!-- Inyectado por JS -->
+      </div>
+      <div class="receipt-divider"></div>
+      <div class="receipt-totals">
+        <div class="receipt-total-row"><span>Subtotal:</span><span id="recSubtotal">$0</span></div>
+        <div class="receipt-total-row"><span>Descuento Prof:</span><span id="recDiscount">$0</span></div>
+        <div class="receipt-total-row main"><span>TOTAL DE COMPRA:</span><span id="recTotal">$0</span></div>
+      </div>
+      <div class="receipt-divider"></div>
+      <div class="receipt-barcode">
+        <div class="barcode-lines">|||||| ||||| ||| ||||||| | ||||| | ||</div>
+        <div class="barcode-text">*** GRACIAS POR SU COMPRA ***</div>
+      </div>
+    </div>
+    <div class="receipt-actions">
+      <button class="receipt-btn download" onclick="downloadReceipt()">📥 Descargar Recibo</button>
+      <button class="receipt-btn close" onclick="closeReceiptModal()">Volver al Catálogo 🛒</button>
     </div>
   </div>
 

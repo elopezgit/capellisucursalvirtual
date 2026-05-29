@@ -6,6 +6,27 @@ let searchQuery = '';           // Búsqueda por texto
 let isProfessional = false;     // Si ve precios profesionales
 let deliveryMethod = 'retiro';  // Método de entrega: 'retiro' o 'envio'
 let paymentMethod = 'efectivo'; // Método de pago: 'efectivo' o 'transferencia'
+let activeTag = '';             // Etiqueta rápida activa
+let lastOrderCartCopy = {};     // Copia de seguridad del último pedido
+
+// Helper seguro para LocalStorage (Previene caídas en Modo Incógnito estricto o protocolo file://)
+const safeStorage = {
+  getItem(key) {
+    try {
+      return localStorage.getItem(key);
+    } catch (e) {
+      console.warn("localStorage.getItem bloqueado o no disponible:", e);
+      return null;
+    }
+  },
+  setItem(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch (e) {
+      console.warn("localStorage.setItem bloqueado o no disponible:", e);
+    }
+  }
+};
 
 let toastTimer;
 let renderedCount = 40;         // Cantidad renderizada (para Lazy Loading)
@@ -106,27 +127,27 @@ function saveClientData() {
   const localidad = document.getElementById('fLocalidad') ? document.getElementById('fLocalidad').value.trim() : '';
   const profesion = document.getElementById('fProfesion') ? document.getElementById('fProfesion').value.trim() : '';
   
-  localStorage.setItem('capelli_nombre', nombre);
-  localStorage.setItem('capelli_apellido', apellido);
-  localStorage.setItem('capelli_email', email);
-  localStorage.setItem('capelli_tel', tel);
-  localStorage.setItem('capelli_sucursal', sucursal);
-  localStorage.setItem('capelli_direccion', direccion);
-  localStorage.setItem('capelli_localidad', localidad);
-  localStorage.setItem('capelli_profesion', profesion);
-  localStorage.setItem('capelli_is_prof', isProfessional ? 'true' : 'false');
+  safeStorage.setItem('capelli_nombre', nombre);
+  safeStorage.setItem('capelli_apellido', apellido);
+  safeStorage.setItem('capelli_email', email);
+  safeStorage.setItem('capelli_tel', tel);
+  safeStorage.setItem('capelli_sucursal', sucursal);
+  safeStorage.setItem('capelli_direccion', direccion);
+  safeStorage.setItem('capelli_localidad', localidad);
+  safeStorage.setItem('capelli_profesion', profesion);
+  safeStorage.setItem('capelli_is_prof', isProfessional ? 'true' : 'false');
 }
 
 function loadClientData() {
-  const nombre = localStorage.getItem('capelli_nombre') || '';
-  const apellido = localStorage.getItem('capelli_apellido') || '';
-  const email = localStorage.getItem('capelli_email') || '';
-  const tel = localStorage.getItem('capelli_tel') || '';
-  const sucursal = localStorage.getItem('capelli_sucursal') || '';
-  const direccion = localStorage.getItem('capelli_direccion') || '';
-  const localidad = localStorage.getItem('capelli_localidad') || '';
-  const profesion = localStorage.getItem('capelli_profesion') || '';
-  const isProfStr = localStorage.getItem('capelli_is_prof') || 'false';
+  const nombre = safeStorage.getItem('capelli_nombre') || '';
+  const apellido = safeStorage.getItem('capelli_apellido') || '';
+  const email = safeStorage.getItem('capelli_email') || '';
+  const tel = safeStorage.getItem('capelli_tel') || '';
+  const sucursal = safeStorage.getItem('capelli_sucursal') || '';
+  const direccion = safeStorage.getItem('capelli_direccion') || '';
+  const localidad = safeStorage.getItem('capelli_localidad') || '';
+  const profesion = safeStorage.getItem('capelli_profesion') || '';
+  const isProfStr = safeStorage.getItem('capelli_is_prof') || 'false';
   
   if (document.getElementById('fNombre')) document.getElementById('fNombre').value = nombre;
   if (document.getElementById('fApellido')) document.getElementById('fApellido').value = apellido;
@@ -252,14 +273,27 @@ function setupInfiniteScroll() {
 function applyFilters() {
   let items = MENU;
   
-  // 1. Filtrar por Categoría
-  if (currentCat !== 'todos') {
-    items = items.filter(p => p.cat === currentCat);
-  }
-  
-  // 2. Filtrar por Marca
-  if (currentBrandCode && currentBrandCode !== 'all') {
-    items = items.filter(p => p.brandCode === currentBrandCode);
+  if (activeTag) {
+    // 1. Filtrar por pastilla de tag rápido activa
+    if (activeTag === 'popular') {
+      items = items.filter(p => p.id % 7 === 0 || p.name.toLowerCase().includes('crema') || p.name.toLowerCase().includes('shampoo') || p.name.toLowerCase().includes('ampolla'));
+    } else if (activeTag === 'oferta') {
+      items = items.filter(p => p.price_prof < p.price || p.id % 9 === 0);
+    } else if (activeTag === 'premium') {
+      items = items.filter(p => p.brandCode === 'WE' || p.brandCode === 'LR' || p.brandCode === 'LP');
+    } else if (activeTag === 'vegano') {
+      items = items.filter(p => p.name.toLowerCase().includes('organic') || p.name.toLowerCase().includes('natural') || p.name.toLowerCase().includes('vegano') || p.brandCode === 'EU');
+    }
+  } else {
+    // 1. Filtrar por Categoría
+    if (currentCat !== 'todos') {
+      items = items.filter(p => p.cat === currentCat);
+    }
+    
+    // 2. Filtrar por Marca
+    if (currentBrandCode && currentBrandCode !== 'all') {
+      items = items.filter(p => p.brandCode === currentBrandCode);
+    }
   }
   
   // 3. Filtrar por Texto (Búsqueda combinada de palabras sueltas)
@@ -316,6 +350,10 @@ function applyFilters() {
 function filterCat(cat) {
   currentCat = cat;
   
+  // Limpiar filtro por etiquetas (Tags) al cambiar de categoría
+  activeTag = '';
+  document.querySelectorAll('.tag-pill').forEach(pill => pill.classList.remove('active'));
+  
   // Limpiar búsqueda por texto al cambiar de categoría para evitar conflictos
   searchQuery = '';
   const searchInput = document.getElementById('searchInput');
@@ -334,6 +372,10 @@ function filterCat(cat) {
 function filterBrand(brandCode, event) {
   if (event) event.stopPropagation();
   currentBrandCode = brandCode;
+  
+  // Limpiar filtro por etiquetas (Tags) al cambiar de marca
+  activeTag = '';
+  document.querySelectorAll('.tag-pill').forEach(pill => pill.classList.remove('active'));
   
   // Limpiar búsqueda por texto al cambiar de marca para evitar conflictos
   searchQuery = '';
@@ -355,6 +397,7 @@ function handleSearch() {
   if (input) {
     searchQuery = input.value.trim();
     applyFilters();
+    showSuggestions(searchQuery); // Desplegar autocompletado Spotlight
   }
 }
 
@@ -787,10 +830,21 @@ function sendWhatsApp() {
   
   saveClientData();
   
+  // Respaldar copia del pedido para poder descargar el recibo físico después de limpiar el carro
+  lastOrderCartCopy = { ...cart };
+  
   // Redirección directa al número solicitado: +5493814647103
   const WA_TARGET = '5493814647103';
   window.open(`https://wa.me/${WA_TARGET}?text=${encodeURIComponent(msg)}`, '_blank');
   showToast(`📲 Redirigiendo a Club Capelli Tucumán...`);
+  
+  // Cerrar el panel del carrito y abrir el recibo interactivo
+  closeCart();
+  openReceiptModal(orderId, `${nombre} ${apellido}`, tel, deliveryMethod, total);
+  
+  // Vaciar carrito activo y actualizar
+  cart = {};
+  updateAll();
 }
 
 // ─── TOAST NOTIFICATION PREMIUM ────────────────────────────────────
@@ -837,6 +891,8 @@ function initScrollObserver() {
 
 // ─── INICIALIZACIÓN ────────────────────────────────────────────────
 function init() {
+  initTheme(); // Inicializar el modo oscuro inteligente según preferencia u horario
+  
   // Splash Screen Fade out
   const splash = document.getElementById('splash');
   if (splash) {
@@ -926,6 +982,350 @@ function closeProductModal() {
     modal.classList.remove('open');
     document.body.style.overflow = '';
   }
+}
+
+// ─── 1. MODO OSCURO INTELIGENTE (MANUAL Y AUTOMÁTICO POR HORARIO) ───
+function toggleTheme() {
+  const body = document.body;
+  const isDark = body.classList.toggle('dark');
+  const btn = document.getElementById('themeToggleBtn');
+  
+  if (btn) {
+    btn.textContent = isDark ? '☀️' : '🌙';
+  }
+  
+  safeStorage.setItem('capelli_theme', isDark ? 'dark' : 'light');
+  showToast(isDark ? '🌙 Modo Oscuro Activado' : '☀️ Modo Claro Activado');
+}
+
+function initTheme() {
+  let theme = safeStorage.getItem('capelli_theme');
+  const now = new Date();
+  const hour = now.getHours();
+  const minute = now.getMinutes();
+  const timeVal = hour + minute / 60;
+  
+  // Activa automáticamente de 19:30hs a 07:00hs si no hay preferencia manual
+  const isNight = timeVal >= 19.5 || timeVal < 7.0;
+  const shouldBeDark = theme === 'dark' || (!theme && isNight);
+  
+  const body = document.body;
+  const btn = document.getElementById('themeToggleBtn');
+  
+  if (shouldBeDark) {
+    body.classList.add('dark');
+    if (btn) btn.textContent = '☀️';
+  } else {
+    body.classList.remove('dark');
+    if (btn) btn.textContent = '🌙';
+  }
+}
+
+// ─── 2. BÚSQUEDA INTELIGENTE POR VOZ (SPEECH-TO-TEXT) ───
+function startVoiceSearch(event) {
+  if (event) event.stopPropagation();
+  const voiceBtn = document.getElementById('voiceBtn');
+  const searchInput = document.getElementById('searchInput');
+  if (!voiceBtn || !searchInput) return;
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    showToast('⚠️ Tu navegador no soporta búsqueda por voz. Probá con Chrome o Safari.');
+    return;
+  }
+
+  if (voiceBtn.classList.contains('active')) return;
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'es-AR'; // Español - Argentina
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.onstart = () => {
+    voiceBtn.classList.add('active');
+    showToast('🎙️ Escuchando... Hablá ahora');
+    searchInput.placeholder = 'Escuchando...';
+  };
+
+  recognition.onresult = (e) => {
+    const transcript = e.results[0][0].transcript;
+    searchInput.value = transcript;
+    searchQuery = transcript;
+    applyFilters();
+    showSuggestions(transcript);
+  };
+
+  recognition.onerror = (e) => {
+    console.error('Speech error:', e.error);
+    if (e.error === 'not-allowed') {
+      showToast('⚠️ Permiso de micrófono denegado.');
+    } else if (e.error === 'no-speech') {
+      showToast('⚠️ No se detectó audio. Intentá de nuevo.');
+    } else {
+      showToast('⚠️ Error al escuchar: ' + e.error);
+    }
+    cleanup();
+  };
+
+  recognition.onend = () => {
+    cleanup();
+  };
+
+  function cleanup() {
+    voiceBtn.classList.remove('active');
+    searchInput.placeholder = 'Buscá por producto, marca (ej: Wella, Idraet), código...';
+  }
+
+  try {
+    recognition.start();
+  } catch (err) {
+    console.error('Error starting recognition:', err);
+    cleanup();
+  }
+}
+
+// ─── 3. SPOTLIGHT SUGGESTIONS (AUTOCOMPLETADO DINÁMICO EN BUSCA) ───
+function showSuggestions(q) {
+  const suggestionsBox = document.getElementById('searchSuggestions');
+  if (!suggestionsBox) return;
+
+  if (!q) {
+    suggestionsBox.style.display = 'none';
+    suggestionsBox.innerHTML = '';
+    return;
+  }
+
+  const words = q.toLowerCase().split(/\s+/).filter(w => w.trim() !== '');
+  if (words.length === 0) {
+    suggestionsBox.style.display = 'none';
+    suggestionsBox.innerHTML = '';
+    return;
+  }
+
+  const matches = MENU.filter(p => {
+    const pName = p.name.toLowerCase();
+    const pCode = p.code.toLowerCase();
+    const pBrand = p.brand.toLowerCase();
+    return words.every(word => pName.includes(word) || pCode.includes(word) || pBrand.includes(word));
+  }).slice(0, 5); // Mostrar hasta 5 sugerencias rápidas
+
+  if (matches.length === 0) {
+    suggestionsBox.style.display = 'none';
+    suggestionsBox.innerHTML = '';
+    return;
+  }
+
+  suggestionsBox.innerHTML = matches.map(item => {
+    const activePrice = isProfessional ? item.price_prof : item.price;
+    return `
+      <div class="suggestion-item" onclick="selectSuggestion(${item.id})">
+        <span class="suggestion-emoji">${item.emoji || '🧪'}</span>
+        <div class="suggestion-info">
+          <span class="suggestion-brand">${item.brand}</span>
+          <span class="suggestion-name">${item.name}</span>
+        </div>
+        <span class="suggestion-price">${formatPrice(activePrice)}</span>
+      </div>
+    `;
+  }).join('');
+  suggestionsBox.style.display = 'block';
+}
+
+function selectSuggestion(id) {
+  const suggestionsBox = document.getElementById('searchSuggestions');
+  if (suggestionsBox) {
+    suggestionsBox.style.display = 'none';
+  }
+  const input = document.getElementById('searchInput');
+  if (input) {
+    input.value = '';
+    searchQuery = '';
+  }
+  applyFilters(); // Resetear filtros internos
+  openProductModal(id); // Abrir directamente modal de detalle de producto
+}
+
+// Cerrar sugerencias al cliquear afuera
+document.addEventListener('click', (e) => {
+  const suggestionsBox = document.getElementById('searchSuggestions');
+  const searchInput = document.getElementById('searchInput');
+  if (suggestionsBox && searchInput && !suggestionsBox.contains(e.target) && e.target !== searchInput) {
+    suggestionsBox.style.display = 'none';
+  }
+});
+
+// ─── 4. QUICK TAG FILTERS (PASTILLAS DE FILTRADO RÁPIDO) ───
+function filterMenuByTag(tag, event) {
+  if (event) event.stopPropagation();
+  
+  const btn = event ? event.currentTarget : null;
+  const isPillActive = btn && btn.classList.contains('active');
+
+  // Resetear clases activas de todos los tags
+  document.querySelectorAll('.tag-pill').forEach(pill => pill.classList.remove('active'));
+
+  if (isPillActive) {
+    // Desactivar tag
+    activeTag = '';
+    applyFilters();
+  } else {
+    // Activar tag y suspender temporalmente los filtros generales estándar
+    activeTag = tag;
+    if (btn) btn.classList.add('active');
+
+    // Deseleccionar clases activas en categorías y marcas UI
+    document.querySelectorAll('.cat-pill').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.brand-pill').forEach(b => b.classList.remove('active'));
+
+    // Limpiar variables de filtros generales
+    currentCat = 'todos';
+    currentBrandCode = 'all';
+    searchQuery = '';
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.value = '';
+
+    applyFilters();
+
+    // Desplazar vista de forma fluida hacia el inicio de los productos
+    const menuTitleEl = document.getElementById('menuTitle');
+    if (menuTitleEl) {
+      menuTitleEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+}
+
+// ─── 5. RECIBO DIGITAL INTERACTIVO (SIMULADOR DE TICKET DE COMPRA) ───
+function openReceiptModal(orderId, name, tel, delivery, total) {
+  const overlay = document.getElementById('receiptOverlay');
+  const modal = document.getElementById('receiptModal');
+  
+  // Rellenar cabecera del recibo
+  const recId = document.getElementById('recId');
+  const recDate = document.getElementById('recDate');
+  const recName = document.getElementById('recName');
+  const recTel = document.getElementById('recTel');
+  const recDelivery = document.getElementById('recDelivery');
+  const recItems = document.getElementById('recItems');
+  const recSubtotal = document.getElementById('recSubtotal');
+  const recDiscount = document.getElementById('recDiscount');
+  const recTotal = document.getElementById('recTotal');
+  
+  const now = new Date();
+  const dateStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  
+  if (recId) recId.textContent = orderId;
+  if (recDate) recDate.textContent = dateStr;
+  if (recName) recName.textContent = name || 'Cliente Invitado';
+  if (recTel) recTel.textContent = tel || 'No provisto';
+  if (recDelivery) recDelivery.textContent = delivery === 'envio' ? 'Envío a Domicilio' : 'Retiro en Sucursal';
+  
+  // Calcular descuentos profesionales reales
+  let subtotal = 0;
+  let itemsHTML = '';
+  
+  Object.entries(lastOrderCartCopy).forEach(([idStr, qty]) => {
+    const item = MENU.find(i => i.id === parseInt(idStr));
+    if (item) {
+      // Precio público por defecto para subtotal base
+      subtotal += item.price * qty;
+      const activePrice = isProfessional ? item.price_prof : item.price;
+      
+      itemsHTML += `
+        <div class="receipt-item-row">
+          <div class="receipt-item-details">
+            <span class="receipt-item-name">${item.name.substring(0, 22)}</span>
+            <span class="receipt-item-sub">${qty}x ${formatPrice(activePrice)} (Cód: ${item.code})</span>
+          </div>
+          <span>${formatPrice(activePrice * qty)}</span>
+        </div>
+      `;
+    }
+  });
+  
+  if (recItems) recItems.innerHTML = itemsHTML;
+  if (recSubtotal) recSubtotal.textContent = formatPrice(subtotal);
+  
+  // Calcular la diferencia si es que compró con descuento profesional
+  const discountVal = subtotal - total;
+  if (recDiscount) {
+    recDiscount.textContent = discountVal > 0 ? `-${formatPrice(discountVal)}` : '$0';
+  }
+  
+  if (recTotal) recTotal.textContent = formatPrice(total);
+  
+  // Mostrar modal recibo
+  if (overlay && modal) {
+    overlay.classList.add('open');
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeReceiptModal() {
+  const overlay = document.getElementById('receiptOverlay');
+  const modal = document.getElementById('receiptModal');
+  if (overlay && modal) {
+    overlay.classList.remove('open');
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  showToast('🛒 ¡Gracias por elegir Club Capelli!');
+}
+
+function downloadReceipt() {
+  const id = document.getElementById('recId') ? document.getElementById('recId').textContent : 'CC-XXXX';
+  const date = document.getElementById('recDate') ? document.getElementById('recDate').textContent : '';
+  const name = document.getElementById('recName') ? document.getElementById('recName').textContent : '';
+  const tel = document.getElementById('recTel') ? document.getElementById('recTel').textContent : '';
+  const delivery = document.getElementById('recDelivery') ? document.getElementById('recDelivery').textContent : '';
+  const subtotal = document.getElementById('recSubtotal') ? document.getElementById('recSubtotal').textContent : '$0';
+  const discount = document.getElementById('recDiscount') ? document.getElementById('recDiscount').textContent : '$0';
+  const total = document.getElementById('recTotal') ? document.getElementById('recTotal').textContent : '$0';
+  
+  let text = `========================================\n`;
+  text += `            CLUB CAPELLI\n`;
+  text += `     Sucursal Yerba Buena Premium\n`;
+  text += `    Av. Aconquija y Lobo de la Vega\n`;
+  text += `========================================\n\n`;
+  text += `COMPROBANTE DE PEDIDO DIGITAL\n`;
+  text += `----------------------------------------\n`;
+  text += `TICKET NRO: ${id}\n`;
+  text += `FECHA:      ${date}\n`;
+  text += `CLIENTE:    ${name}\n`;
+  text += `TEL:        ${tel}\n`;
+  text += `ENTREGA:    ${delivery}\n`;
+  text += `----------------------------------------\n`;
+  text += `CANT  DETALLE                   SUBTOTAL\n`;
+  text += `----------------------------------------\n`;
+  
+  Object.entries(lastOrderCartCopy).forEach(([idStr, qty]) => {
+    const item = MENU.find(i => i.id === parseInt(idStr));
+    if (item) {
+      const activePrice = isProfessional ? item.price_prof : item.price;
+      const sub = activePrice * qty;
+      const namePad = item.name.substring(0, 24).padEnd(25, ' ');
+      const qtyPad = String(qty).padEnd(5, ' ');
+      text += `${qtyPad} ${namePad} $${sub.toLocaleString('es-AR')}\n`;
+    }
+  });
+  
+  text += `----------------------------------------\n`;
+  text += `SUBTOTAL PRODUCTOS:      ${subtotal}\n`;
+  text += `DESCUENTO PROFESIONAL:   ${discount}\n`;
+  text += `TOTAL ESTIMADO:          ${total}\n`;
+  text += `========================================\n`;
+  text += `   * Sujeto a verificación de stock *\n`;
+  text += `       *** GRACIAS POR SU COMPRA ***\n`;
+  text += `========================================\n`;
+
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `ticket-capelli-${id.replace('#', '')}.txt`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  showToast('📥 Descargando ticket.txt...');
 }
 
 // Iniciar aplicación al cargar con resguardo para estados ya cargados
