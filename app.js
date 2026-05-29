@@ -352,22 +352,28 @@ function renderBrandPills() {
   if (!container) return;
   
   const popularBrands = [
-    { code: 'all', name: '✨ Todas' },
-    { code: 'ID', name: 'Idraet' },
-    { code: 'WE', name: 'Wella' },
-    { code: 'LR', name: "L'Oréal" },
-    { code: 'SK', name: 'Silkey' },
-    { code: 'OW', name: 'Opción' },
-    { code: 'TO', name: 'Duga/Xúlu' },
-    { code: 'LP', name: 'La Puissance' },
-    { code: 'UM', name: 'Real Tech' },
-    { code: 'EU', name: 'Exel' },
-    { code: 'AR', name: 'Zita' }
+    { code: 'all', name: 'Todas', img: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=150&q=80' },
+    { code: 'ID', name: 'Idraet', img: 'https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=150&q=80' },
+    { code: 'WE', name: 'Wella', img: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=150&q=80' },
+    { code: 'LR', name: "L'Oréal", img: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=150&q=80' },
+    { code: 'SK', name: 'Silkey', img: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=150&q=80' },
+    { code: 'OW', name: 'Opción', img: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=150&q=80' },
+    { code: 'TO', name: 'Duga/Xúlu', img: 'https://images.unsplash.com/photo-1522337654788-7b8299836e1a?w=150&q=80' },
+    { code: 'LP', name: 'La Puissance', img: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=150&q=80' },
+    { code: 'UM', name: 'Real Tech', img: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=150&q=80' },
+    { code: 'EU', name: 'Exel', img: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=150&q=80' },
+    { code: 'AR', name: 'Zita', img: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=150&q=80' }
   ];
   
   container.innerHTML = popularBrands.map(b => {
     const isActive = b.code === currentBrandCode;
-    return `<div class="brand-pill ${isActive ? 'active' : ''}" onclick="filterBrand('${b.code}', event)" data-code="${b.code}">${b.name}</div>`;
+    return `
+      <div class="brand-card brand-pill ${isActive ? 'active' : ''}" onclick="filterBrand('${b.code}', event)" data-code="${b.code}">
+        <div class="brand-card-img-wrap">
+          <img src="${b.img}" alt="${b.name}" class="brand-card-img">
+        </div>
+        <div class="brand-card-title">${b.name}</div>
+      </div>`;
   }).join('');
 }
 

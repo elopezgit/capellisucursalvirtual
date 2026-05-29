@@ -76,20 +76,82 @@
       </div>
     </header>
 
-    <!-- SELECTOR DE CATEGORÍAS GOURMET -->
+    <!-- BANNER PROMO HERO ESTILO PEDIDOSYA -->
+    <div class="hero-banner-wrap fade-section" id="fsHeroBanner">
+      <div class="hero-banner-card">
+        <div class="hbc-content-left">
+          <span class="hbc-badge">Club Capelli Tucumán</span>
+          <h1 class="hbc-title">Tus compras de salón, sin horarios</h1>
+          <p class="hbc-desc">
+            Elegí entre más de 7,800 cosméticos y herramientas profesionales con envíos rápidos a domicilio o retiro en nuestras 7 sucursales.
+          </p>
+          <div class="hbc-actions">
+            <button class="hbc-btn" onclick="document.getElementById('fsMenu').scrollIntoView({behavior: 'smooth'})">🛍️ Explorar Catálogo</button>
+            <span class="hbc-badge-delivery">🛵 Envíos en el día</span>
+          </div>
+        </div>
+        <div class="hbc-content-right">
+          <img src="img/productos/en_preparacion.png" alt="Capelli Promo Banner" class="hbc-promo-img">
+        </div>
+      </div>
+    </div>
+
+    <!-- SELECTOR DE CATEGORÍAS ESTILO PEDIDOSYA -->
     <div class="cats-wrap fade-section" id="fsCats">
       <div class="section-label-center">
         <span class="gold-subtitle">DISTRIBUIDOR LÍDER DE BELLEZA</span>
-        <h2>Líneas y Productos</h2>
+        <h2>Líneas y Categorías</h2>
       </div>
       <div class="cats-scroll" id="catScroll">
-        <div class="cat-pill active" onclick="filterCat('todos')" data-cat="todos"><span>🌟</span>Todos</div>
-        <div class="cat-pill" onclick="filterCat('capilar')" data-cat="capilar"><span>💇</span>Capilar</div>
-        <div class="cat-pill" onclick="filterCat('unas')" data-cat="unas"><span>💅</span>Manicuría y Uñas</div>
-        <div class="cat-pill" onclick="filterCat('skincare')" data-cat="skincare"><span>🧴</span>Skincare y Estética</div>
-        <div class="cat-pill" onclick="filterCat('herramientas')" data-cat="herramientas"><span>✂️</span>Herramientas y Eléctricos</div>
-        <div class="cat-pill" onclick="filterCat('maquillaje')" data-cat="maquillaje"><span>💄</span>Maquillaje</div>
-        <div class="cat-pill" onclick="filterCat('accesorios')" data-cat="accesorios"><span>🎗️</span>Accesorios y Varios</div>
+        <!-- Tarjeta: Todos -->
+        <div class="cat-card cat-pill active" onclick="filterCat('todos')" data-cat="todos">
+          <div class="cat-card-img-wrap">
+            <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=200&q=80" alt="Todos" class="cat-card-img">
+          </div>
+          <div class="cat-card-title">Todos</div>
+        </div>
+        <!-- Tarjeta: Capilar -->
+        <div class="cat-card cat-pill" onclick="filterCat('capilar')" data-cat="capilar">
+          <div class="cat-card-img-wrap">
+            <img src="https://images.unsplash.com/photo-1562322140-8baeececf3df?w=200&q=80" alt="Capilar" class="cat-card-img">
+          </div>
+          <div class="cat-card-title">Capilar</div>
+        </div>
+        <!-- Tarjeta: Uñas -->
+        <div class="cat-card cat-pill" onclick="filterCat('unas')" data-cat="unas">
+          <div class="cat-card-img-wrap">
+            <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=200&q=80" alt="Uñas" class="cat-card-img">
+          </div>
+          <div class="cat-card-title">Manicuría</div>
+        </div>
+        <!-- Tarjeta: Skincare -->
+        <div class="cat-card cat-pill" onclick="filterCat('skincare')" data-cat="skincare">
+          <div class="cat-card-img-wrap">
+            <img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?w=200&q=80" alt="Skincare" class="cat-card-img">
+          </div>
+          <div class="cat-card-title">Skincare</div>
+        </div>
+        <!-- Tarjeta: Herramientas -->
+        <div class="cat-card cat-pill" onclick="filterCat('herramientas')" data-cat="herramientas">
+          <div class="cat-card-img-wrap">
+            <img src="https://images.unsplash.com/photo-1522338242992-e1a54906a8da?w=200&q=80" alt="Herramientas" class="cat-card-img">
+          </div>
+          <div class="cat-card-title">Equipos</div>
+        </div>
+        <!-- Tarjeta: Maquillaje -->
+        <div class="cat-card cat-pill" onclick="filterCat('maquillaje')" data-cat="maquillaje">
+          <div class="cat-card-img-wrap">
+            <img src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=200&q=80" alt="Maquillaje" class="cat-card-img">
+          </div>
+          <div class="cat-card-title">Maquillaje</div>
+        </div>
+        <!-- Tarjeta: Accesorios -->
+        <div class="cat-card cat-pill" onclick="filterCat('accesorios')" data-cat="accesorios">
+          <div class="cat-card-img-wrap">
+            <img src="https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=200&q=80" alt="Accesorios" class="cat-card-img">
+          </div>
+          <div class="cat-card-title">Accesorios</div>
+        </div>
       </div>
     </div>
 
