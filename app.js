@@ -693,7 +693,7 @@ function renderCartPanel() {
   if (form) form.style.display = 'block';
 }
 
-// ─── ENVÍO DE PEDIDO A WHATSAPP (+5493814484845) ───────────────────
+// ─── ENVÍO DE PEDIDO A WHATSAPP (+5493814647103) ───────────────────
 function sendWhatsApp() {
   const nombre = document.getElementById('fNombre').value.trim();
   const apellido = document.getElementById('fApellido').value.trim();
@@ -787,8 +787,8 @@ function sendWhatsApp() {
   
   saveClientData();
   
-  // Redirección directa al número solicitado: +5493814484845
-  const WA_TARGET = '5493814484845';
+  // Redirección directa al número solicitado: +5493814647103
+  const WA_TARGET = '5493814647103';
   window.open(`https://wa.me/${WA_TARGET}?text=${encodeURIComponent(msg)}`, '_blank');
   showToast(`📲 Redirigiendo a Club Capelli Tucumán...`);
 }

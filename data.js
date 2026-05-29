@@ -1,10 +1,10 @@
 // ─── CONFIGURACIÓN DE DISTRIBUIDORA CLUB CAPELLI ────────────────────────
-const WA_NUMBER = '5493814484845'; // Teléfono oficial Club Capelli
+const WA_NUMBER = '5493814647103'; // Teléfono oficial Club Capelli
 const INSTAGRAM_USER = 'clubcapelli';
-const PHONE_CONTACT = '3814484845';
+const PHONE_CONTACT = '3814647103';
 
 const SUCURSALES = [
-  { name: 'Av. Aconquija y Lobo de la Vega (Yerba Buena)', phone: '+5493814484845' }
+  { name: 'Av. Aconquija y Lobo de la Vega (Yerba Buena)', phone: '+5493814647103' }
 ];
 
 const CATEGORIES = {
