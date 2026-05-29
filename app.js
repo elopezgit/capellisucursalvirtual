@@ -262,14 +262,23 @@ function applyFilters() {
     items = items.filter(p => p.brandCode === currentBrandCode);
   }
   
-  // 3. Filtrar por Texto
+  // 3. Filtrar por Texto (Búsqueda combinada de palabras sueltas)
   if (searchQuery) {
-    const q = searchQuery.toLowerCase();
-    items = items.filter(p => 
-      p.name.toLowerCase().includes(q) || 
-      p.code.toLowerCase().includes(q) || 
-      p.brand.toLowerCase().includes(q)
-    );
+    const words = searchQuery.toLowerCase().split(/\s+/).filter(w => w.trim() !== '');
+    if (words.length > 0) {
+      items = items.filter(p => {
+        const productName = p.name.toLowerCase();
+        const productCode = p.code.toLowerCase();
+        const productBrand = p.brand.toLowerCase();
+        
+        // El producto debe contener todas y cada una de las palabras ingresadas en la búsqueda
+        return words.every(word => 
+          productName.includes(word) || 
+          productCode.includes(word) || 
+          productBrand.includes(word)
+        );
+      });
+    }
   }
   
   filteredItems = items;
@@ -296,7 +305,10 @@ function applyFilters() {
     
     let searchSuffix = searchQuery ? ` · Búsqueda: "${searchQuery}"` : "";
     
-    titleEl.textContent = `${catPrefix} ${catName}${brandSuffix}${searchSuffix} (${filteredItems.length} productos)`;
+    titleEl.innerHTML = `
+      <span class="menu-title-main">${catPrefix} ${catName}${brandSuffix}${searchSuffix}</span>
+      <span class="menu-title-count-badge">${filteredItems.length} productos encontrados</span>
+    `;
   }
 }
 
