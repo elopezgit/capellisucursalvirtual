@@ -253,7 +253,7 @@ h1, h2, h3, h4 {
 
 /* ── navbar superior glassmorphic ── */
 .header {
-  position: fixed;
+  position: sticky; /* Sticky header para evitar hacks de margin-top fijos y garantizar 0 solapamientos */
   top: 0;
   left: 0;
   width: 100%;
@@ -859,7 +859,7 @@ h1, h2, h3, h4 {
 /* ── hero banner estilo pedidosya ── */
 .hero-banner-wrap {
   max-width: 1400px;
-  margin: 140px auto 20px auto; /* 140px de margen para librar la navbar fija */
+  margin: 25px auto 20px auto; /* Reducido a 25px porque el header sticky se encarga del flujo automáticamente */
   padding: 0 24px;
 }
 .hero-banner-card {
@@ -3080,11 +3080,70 @@ input:checked + .slider-premium:before {
     padding: 4px 10px !important;
     margin-left: 0 !important;
   }
-  .toggle-prof-wrap {
-    padding: 4px 10px !important;
+}
+
+/* ── DISPOSITIVOS CHICOS Y MEDIANOS OVERRIDES (IPHONE 16 / TABLETS / ETC.) ── */
+@media (max-width: 576px) {
+  .header-inner {
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+    padding: 10px 16px !important;
   }
+  
+  .brand-block {
+    flex-grow: 1 !important;
+  }
+  
+  .cart-fab {
+    order: 2 !important; /* El botón de carrito se alinea a la derecha del logo */
+  }
+  
+  .toggle-prof-wrap {
+    order: 3 !important; /* Baja a una nueva línea de ancho completo */
+    width: 100% !important;
+    justify-content: space-between !important;
+    margin-top: 2px !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 215, 0, 0.3) !important;
+    padding: 6px 12px !important;
+  }
+  
   .toggle-prof-label {
-    display: inline-block !important; /* Permitir que sea visible en móvil porque el wrap tiene más espacio ahora */
-    font-size: 0.7rem !important;
+    display: inline-block !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .header-mini-logo {
+    height: 38px !important; /* Reducido levemente en celulares para dar aire */
+  }
+  
+  .brand-title {
+    font-size: 1rem !important;
+  }
+  
+  .brand-greeting {
+    font-size: 0.62rem !important;
+  }
+  
+  .search-bar {
+    padding: 0 16px !important;
+  }
+  
+  .search-bar input {
+    padding: 10px 16px 10px 42px !important;
+    font-size: 0.85rem !important;
+  }
+  
+  .search-icon {
+    left: 28px !important;
+  }
+  
+  .hero-banner-wrap {
+    margin-top: 15px !important; /* Spacing limpio porque el header sticky expande su altura automáticamente */
+    padding: 0 12px !important;
+  }
+  
+  .cats-wrap {
+    margin-top: 15px !important;
   }
 }
