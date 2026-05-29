@@ -4,13 +4,7 @@ const INSTAGRAM_USER = 'clubcapelli';
 const PHONE_CONTACT = '3814484845';
 
 const SUCURSALES = [
-  { name: 'Córdoba 561 (San Miguel de Tucumán)', phone: '+5493814484845' },
-  { name: 'Crisóstomo Álvarez 545 (San Miguel de Tucumán)', phone: '+5493814484845' },
-  { name: '24 de Septiembre 205 (San Miguel de Tucumán)', phone: '+5493814484845' },
-  { name: 'Salta 785 (San Miguel de Tucumán)', phone: '+5493814484845' },
-  { name: 'San Martín 643 - Galería La Gran Vía (San Miguel de Tucumán)', phone: '+5493814484845' },
-  { name: 'Av. Aconquija y Lobo de la Vega (Yerba Buena)', phone: '+5493814484845' },
-  { name: 'Colón 214 (Monteros)', phone: '+5493814484845' }
+  { name: 'Av. Aconquija y Lobo de la Vega (Yerba Buena)', phone: '+5493814484845' }
 ];
 
 const CATEGORIES = {
