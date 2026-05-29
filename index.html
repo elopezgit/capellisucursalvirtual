@@ -11,6 +11,7 @@
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Outfit:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.json">
 </head>
 
 <body>
@@ -66,6 +67,18 @@
           <!-- CONMUTADOR DE TEMA ELITE (MODO OSCURO) -->
           <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Cambiar Tema">🌙</button>
 
+          <!-- BOTÓN WISHLIST -->
+          <button class="wishlist-fab" onclick="openWishlistPanel()" title="Mis Favoritos" id="wishlistFab">
+            🤍
+            <div class="wishlist-badge" id="wishlistBadge" style="display:none;">0</div>
+          </button>
+
+          <!-- BOTÓN HISTORIAL -->
+          <button class="history-fab" onclick="openHistoryPanel()" title="Historial de Pedidos" id="historyFab">
+            📋
+            <div class="history-badge" id="historyBadge" style="display:none;">0</div>
+          </button>
+
           <button class="cart-fab" onclick="openCart()" id="cartFab">
             <span class="cart-fab-icon">🛒</span>
             <div class="cart-count" id="cartCount">0</div>
@@ -83,23 +96,43 @@
       <div class="search-suggestions" id="searchSuggestions" style="display:none"></div>
     </header>
 
-    <!-- BANNER PROMO HERO ESTILO PEDIDOSYA -->
-    <div class="hero-banner-wrap fade-section" id="fsHeroBanner">
-      <div class="hero-banner-card">
-        <div class="hbc-content-left">
-          <span class="hbc-badge">Club Capelli Tucumán</span>
-          <h1 class="hbc-title">Tus compras de salón, sin horarios</h1>
-          <p class="hbc-desc">
-            Elegí entre más de 7,800 cosméticos y herramientas profesionales con envíos rápidos a domicilio o retiro en nuestra sucursal de Yerba Buena.
-          </p>
-          <div class="hbc-actions">
-            <button class="hbc-btn" onclick="document.getElementById('fsMenu').scrollIntoView({behavior: 'smooth'})">🛍️ Explorar Catálogo</button>
-            <span class="hbc-badge-delivery">🛵 Envíos en el día</span>
+    <!-- BANNER PROMO COMPACTO AUTO-ROTATIVO (HERO SLIDER MULTI-ANUNCIO) -->
+    <div class="hero-slider-wrap fade-section" id="fsHeroBanner">
+      <div class="hero-slider-container">
+        
+        <!-- Slide 1: Cursos de Belleza -->
+        <div class="hero-slide active" style="background: linear-gradient(135deg, #121212 30%, rgba(164, 127, 59, 0.9) 100%);">
+          <div class="hs-content">
+            <span class="hs-badge gold">🎓 Academia Club Capelli</span>
+            <h2 class="hs-title">¡Anotate en nuestros Cursos Profesionales!</h2>
+            <p class="hs-desc">Capacitate con los mejores estilistas y coloristas. Cupos limitados para este ciclo.</p>
+            <button class="hs-btn" onclick="window.open('https://clubcapellicursos.netlify.app/', '_blank')">🎓 Consultar Cursos</button>
           </div>
+          <div class="hs-decor">🎓</div>
         </div>
-        <div class="hbc-content-right">
-          <img src="img/productos/en_preparacion.png" alt="Capelli Promo Banner" class="hbc-promo-img">
+
+        <!-- Slide 2: Envíos a Domicilio -->
+        <div class="hero-slide" style="background: linear-gradient(135deg, var(--primary) 30%, #ff7300 100%);">
+          <div class="hs-content">
+            <span class="hs-badge white">🛵 Envíos y Entregas</span>
+            <h2 class="hs-title">Envíos Rápidos a Domicilio en el Día</h2>
+            <p class="hs-desc">Recibí tus insumos de salón directamente en tu local o retirá en Yerba Buena.</p>
+            <button class="hs-btn dark" onclick="document.getElementById('fsMenu').scrollIntoView({behavior: 'smooth'})">🛍️ Explorar Catálogo</button>
+          </div>
+          <div class="hs-decor">🛵</div>
         </div>
+
+        <!-- Slide 3: Precio y Calidad Profesional -->
+        <div class="hero-slide" style="background: linear-gradient(135deg, #1e293b 30%, #ffd700 100%);">
+          <div class="hs-content">
+            <span class="hs-badge gold">💎 Distribuidora Mayorista</span>
+            <h2 class="hs-title">Calidad de Salón y Precios Imbatibles</h2>
+            <p class="hs-desc">Distribución oficial de marcas líderes con descuentos exclusivos para profesionales.</p>
+            <button class="hs-btn gold" onclick="document.getElementById('profToggle').scrollIntoView({behavior: 'smooth'})">✨ Activar Modo Profesional</button>
+          </div>
+          <div class="hs-decor">💎</div>
+        </div>
+
       </div>
     </div>
 
@@ -160,6 +193,11 @@
           <div class="cat-card-title">Accesorios</div>
         </div>
       </div>
+    </div>
+
+    <!-- SUB-CATEGORÍAS DINÁMICAS (ANIDADAS EN TIEMPO REAL) -->
+    <div class="subcats-wrap fade-section" id="fsSubCats" style="display: none;">
+      <div class="subcats-scroll" id="subcatScroll"></div>
     </div>
 
     <!-- SECTOR DE FILTRADO POR MARCAS POPULARES -->
@@ -336,9 +374,9 @@
             <div class="transfer-info-card">
               <div class="tic-header">ℹ️ Datos para la Transferencia</div>
               <div class="tic-body">
-                <p><strong>Alias:</strong> <span id="transferAliasText" style="user-select: all; font-weight:700; background:rgba(230,95,0,0.1); padding:2px 6px; border-radius:4px; color:var(--primary);">CAPELLI.TUC.MP</span></p>
-                <p><strong>Titular:</strong> Club Capelli S.A.S.</p>
-                <p><strong>CVU:</strong> 0000003100023456789012</p>
+                <p><strong>Alias:</strong> <span id="transferAliasText" style="user-select: all; font-weight:700; background:rgba(230,95,0,0.1); padding:2px 6px; border-radius:4px; color:var(--primary);">clubcapelli.mp</span></p>
+                <p><strong>Titular:</strong> Cesar Ezequiel Salas Cabral</p>
+                <p><strong>CVU:</strong> 0000003100098932239946</p>
                 <p><strong>Banco:</strong> Mercado Pago</p>
               </div>
               <button type="button" class="copy-alias-btn" onclick="copyAlias()">📋 Copiar Alias</button>
@@ -429,6 +467,36 @@
     <div class="receipt-actions">
       <button class="receipt-btn download" onclick="downloadReceipt()">📥 Descargar Recibo</button>
       <button class="receipt-btn close" onclick="closeReceiptModal()">Volver al Catálogo 🛒</button>
+    </div>
+  </div>
+
+  <!-- PANEL WISHLIST (LISTA DE FAVORITOS) -->
+  <div class="panel-overlay" id="wishlistOverlay" onclick="closeWishlistPanel()"></div>
+  <div class="panel wishlist-panel" id="wishlistPanel">
+    <div class="panel-header-wrap">
+      <div class="panel-handle"></div>
+      <div class="panel-title">
+        <span>❤️ Mis Favoritos</span>
+        <button class="panel-close" onclick="closeWishlistPanel()">✕</button>
+      </div>
+    </div>
+    <div class="panel-scroll-area">
+      <div id="wishlistContent"></div>
+    </div>
+  </div>
+
+  <!-- PANEL HISTORIAL DE PEDIDOS -->
+  <div class="panel-overlay" id="historyOverlay" onclick="closeHistoryPanel()"></div>
+  <div class="panel history-panel" id="historyPanel">
+    <div class="panel-header-wrap">
+      <div class="panel-handle"></div>
+      <div class="panel-title">
+        <span>📋 Historial de Pedidos</span>
+        <button class="panel-close" onclick="closeHistoryPanel()">✕</button>
+      </div>
+    </div>
+    <div class="panel-scroll-area">
+      <div id="historyContent"></div>
     </div>
   </div>
 

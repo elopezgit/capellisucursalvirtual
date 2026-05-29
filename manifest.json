@@ -1,0 +1,18 @@
+{
+  "short_name": "Club Capelli",
+  "name": "Club Capelli - Catálogo Premium",
+  "description": "Sucursal Virtual Premium de cosméticos y herramientas profesionales para salones y el hogar en Tucumán.",
+  "icons": [
+    {
+      "src": "img/logo/capellilogo.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#f3f4f6",
+  "theme_color": "#e65f00",
+  "display": "standalone",
+  "orientation": "portrait"
+}

@@ -1,6 +1,7 @@
 // ─── ESTADO GLOBAL DE LA APLICACIÓN ─────────────────────────────────
 let cart = {};                  // Estructura: { id_producto: cantidad }
 let currentCat = 'todos';       // Categoría activa
+let currentSubCat = 'todos';    // Subcategoría activa
 let currentBrandCode = 'all';   // Código de marca filtrado
 let searchQuery = '';           // Búsqueda por texto
 let isProfessional = false;     // Si ve precios profesionales
@@ -8,6 +9,140 @@ let deliveryMethod = 'retiro';  // Método de entrega: 'retiro' o 'envio'
 let paymentMethod = 'efectivo'; // Método de pago: 'efectivo' o 'transferencia'
 let activeTag = '';             // Etiqueta rápida activa
 let lastOrderCartCopy = {};     // Copia de seguridad del último pedido
+let wishlist = new Set();       // IDs de productos marcados como favoritos
+
+// Reglas de Sub-Categorías dinámicas en tiempo real (evita alterar data.js)
+const SUBCATEGORIES_RULES = {
+  capilar: [
+    { key: 'shampoo', name: 'Shampoo y Enjuague', words: ['shampoo', 'acondicionador', 'enjuague', 'crema de enjuague', 'sh.'] },
+    { key: 'tintura', name: 'Tinturas y Oxidantes', words: ['tintura', 'coloracion', 'kit', 'oxidante', 'activador', 'cielo color', 'tono', 'c.color', 'cartoon'] },
+    { key: 'tratamiento', name: 'Tratamientos y Máscaras', words: ['tratamiento', 'mascara', 'ampolla', 'crema de peinar', 'oleo', 'aceite', 'nutricion', 'alisado', 'kleral', 'keratina', 'reconstructor'] },
+    { key: 'otros', name: 'Otros Capilares', words: [] }
+  ],
+  unas: [
+    { key: 'esmalte', name: 'Esmaltes y Geles', words: ['esmalte', 'gel', 'semipermanente', 'base coat', 'top coat', 'meline', 'zita', 'nails', 'uv gel', 'via lactea'] },
+    { key: 'herramientas', name: 'Limas y Tornos', words: ['lima', 'torno', 'fresa', 'cortaunas', 'alicates', 'repujador', 'corta cuticula', 'bloque pulidor'] },
+    { key: 'cabinas', name: 'Cabinas y Lámparas', words: ['cabina', 'lampara', 'uv', 'led', 'esterilizador'] },
+    { key: 'otros', name: 'Otros Manicuría', words: [] }
+  ],
+  skincare: [
+    { key: 'limpieza', name: 'Limpieza y Exfoliación', words: ['limpieza', 'exfoliante', 'gel de limpieza', 'agua micelar', 'leche de limpieza', 'tonico', 'bruma'] },
+    { key: 'serum', name: 'Serums y Ampollas', words: ['serum', 'ampolla', 'concentrado', 'acido', 'hialuronico', 'vitamina c'] },
+    { key: 'cremas', name: 'Cremas Hidratantes', words: ['crema', 'hidratante', 'gel', 'emulsion', 'mascara facial'] },
+    { key: 'otros', name: 'Otros Skincare', words: [] }
+  ],
+  herramientas: [
+    { key: 'secadores', name: 'Secadores y Planchas', words: ['secador', 'plancha', 'planchita', 'buclera', 'difusor'] },
+    { key: 'tijeras', name: 'Tijeras y Navajas', words: ['tijera', 'navaja', 'hoja de afeitar', 'filo', 'navajin'] },
+    { key: 'maquinas', name: 'Máquinas Cortadoras', words: ['maquina', 'patillera', 'clipper', 'trimmer', 'afeitadora'] },
+    { key: 'otros', name: 'Otros Equipos', words: [] }
+  ],
+  maquillaje: [
+    { key: 'rostro', name: 'Rostro y Bases', words: ['base', 'corrector', 'polvo', 'rubor', 'iluminador', 'primer', 'makeup'] },
+    { key: 'ojos', name: 'Ojos y Cejas', words: ['sombra', 'delineador', 'rimel', 'mascara de pestanas', 'cejas', 'pestanas'] },
+    { key: 'labios', name: 'Labios', words: ['labial', 'brillo', 'delineador de labios', 'gloss', 'lipstick'] },
+    { key: 'otros', name: 'Otros Maquillaje', words: [] }
+  ],
+  accesorios: [
+    { key: 'pinceles', name: 'Pinceles y Brochas', words: ['pincel', 'brocha', 'esponja', 'aplicador', 'brush'] },
+    { key: 'descartables', name: 'Descartables e Higiene', words: ['algodon', 'descartable', 'toallitas', 'capa', 'guantes', 'banda', 'cuello'] },
+    { key: 'otros', name: 'Otros Accesorios', words: [] }
+  ]
+};
+
+// Clasificador dinámico de subcategorías
+function getItemSubCat(item) {
+  const rules = SUBCATEGORIES_RULES[item.cat];
+  if (!rules) return 'otros';
+  const nameLower = item.name.toLowerCase();
+  const brandLower = item.brand.toLowerCase();
+  for (let rule of rules) {
+    if (rule.words.length === 0) continue;
+    if (rule.words.some(word => nameLower.includes(word) || brandLower.includes(word))) {
+      return rule.key;
+    }
+  }
+  return 'otros';
+}
+
+// Renderizar pastillas de subcategorías
+function renderSubCategories() {
+  const wrap = document.getElementById('fsSubCats');
+  const scroll = document.getElementById('subcatScroll');
+  if (!wrap || !scroll) return;
+  if (currentCat === 'todos') {
+    wrap.style.display = 'none';
+    scroll.innerHTML = '';
+    currentSubCat = 'todos';
+    return;
+  }
+  const rules = SUBCATEGORIES_RULES[currentCat];
+  if (!rules) {
+    wrap.style.display = 'none';
+    return;
+  }
+  let html = `<button class="subcat-pill ${currentSubCat === 'todos' ? 'active' : ''}" onclick="filterSubCat('todos')">🌐 Todos</button>`;
+  rules.forEach(rule => {
+    const count = MENU.filter(p => p.cat === currentCat && (rule.key === 'otros' ? getItemSubCat(p) === 'otros' : getItemSubCat(p) === rule.key)).length;
+    if (count > 0) {
+      html += `<button class="subcat-pill ${currentSubCat === rule.key ? 'active' : ''}" onclick="filterSubCat('${rule.key}')">${rule.name} (${count})</button>`;
+    }
+  });
+  scroll.innerHTML = html;
+  wrap.style.display = 'block';
+}
+
+function filterSubCat(subcat) {
+  currentSubCat = subcat;
+  applyFilters();
+  renderSubCategories();
+}
+
+// Algoritmo Levenshtein para Fuzzy Search Offline
+function levenshteinDistance(s1, s2) {
+  if (s1.length < s2.length) return levenshteinDistance(s2, s1);
+  if (s2.length === 0) return s1.length;
+  let prev = Array.from({ length: s2.length + 1 }, (_, i) => i);
+  for (let i = 0; i < s1.length; i++) {
+    let curr = [i + 1];
+    for (let j = 0; j < s2.length; j++) {
+      let insert = prev[j + 1] + 1;
+      let del = curr[j] + 1;
+      let sub = prev[j] + (s1[i] === s2[j] ? 0 : 1);
+      curr.push(Math.min(insert, del, sub));
+    }
+    prev = curr;
+  }
+  return prev[s2.length];
+}
+
+function isFuzzyMatch(productWord, queryWord) {
+  if (queryWord.length < 3) return productWord.includes(queryWord);
+  const maxDist = queryWord.length > 5 ? 2 : 1;
+  if (productWord.includes(queryWord)) return true;
+  if (productWord.length >= queryWord.length) {
+    for (let i = 0; i <= productWord.length - queryWord.length; i++) {
+      const subWord = productWord.substring(i, i + queryWord.length);
+      if (levenshteinDistance(subWord, queryWord) <= maxDist) return true;
+    }
+  }
+  return levenshteinDistance(productWord, queryWord) <= maxDist;
+}
+
+// Resaltador de coincidencia en texto UI
+function highlightText(text, query) {
+  if (!query) return text;
+  const words = query.toLowerCase().split(/\s+/).filter(w => w.trim().length > 1);
+  if (words.length === 0) return text;
+  let highlighted = text;
+  words.sort((a, b) => b.length - a.length);
+  words.forEach(word => {
+    const escapedWord = word.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const regex = new RegExp(`(${escapedWord})`, 'gi');
+    highlighted = highlighted.replace(regex, '<mark class="highlight-text">$1</mark>');
+  });
+  return highlighted;
+}
 
 // Helper seguro para LocalStorage (Previene caídas en Modo Incógnito estricto o protocolo file://)
 const safeStorage = {
@@ -208,15 +343,21 @@ function renderFilteredMenu() {
       
     const profBadge = isProfessional ? `<span class="price-badge-prof">Prof</span>` : '';
     
+    const displayName = searchQuery ? highlightText(item.name, searchQuery) : item.name;
+    const displayBrand = searchQuery ? highlightText(item.brand, searchQuery) : item.brand;
+    
+    const isInWishlist = wishlist.has(item.id);
+    
     html += `
       <div class="menu-item ${inCart ? 'in-cart' : ''}" id="mi-${item.id}" onclick="openProductModal(${item.id})">
         <div class="item-photo">
           ${photoHTML(getProductImage(item), item.emoji, item.name)}
         </div>
+        <button class="wishlist-toggle-btn ${isInWishlist ? 'active' : ''}" id="wb-${item.id}" onclick="toggleWishlist(${item.id}, event)" title="${isInWishlist ? 'Quitar de favoritos' : 'Agregar a favoritos'}">${isInWishlist ? '❤️' : '🤍'}</button>
         <div class="item-info">
           <div>
-            <div class="item-brand-label" style="font-size:0.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; margin-bottom:4px;">${item.brand}</div>
-            <div class="item-name">${item.name}</div>
+            <div class="item-brand-label" style="font-size:0.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; margin-bottom:4px;">${displayBrand}</div>
+            <div class="item-name">${displayName}</div>
             <div class="item-desc" style="font-size:0.78rem; color:var(--text-muted);">Contenido: ${item.content} · Cód: ${item.code}</div>
           </div>
           <div class="item-footer">
@@ -288,6 +429,11 @@ function applyFilters() {
     // 1. Filtrar por Categoría
     if (currentCat !== 'todos') {
       items = items.filter(p => p.cat === currentCat);
+      
+      // Filtrar por Sub-categoría si está seleccionada
+      if (currentSubCat !== 'todos') {
+        items = items.filter(p => getItemSubCat(p) === currentSubCat);
+      }
     }
     
     // 2. Filtrar por Marca
@@ -296,7 +442,7 @@ function applyFilters() {
     }
   }
   
-  // 3. Filtrar por Texto (Búsqueda combinada de palabras sueltas)
+  // 3. Filtrar por Texto (Búsqueda combinada de palabras sueltas con Fuzzy Search)
   if (searchQuery) {
     const words = searchQuery.toLowerCase().split(/\s+/).filter(w => w.trim() !== '');
     if (words.length > 0) {
@@ -305,12 +451,16 @@ function applyFilters() {
         const productCode = p.code.toLowerCase();
         const productBrand = p.brand.toLowerCase();
         
-        // El producto debe contener todas y cada una de las palabras ingresadas en la búsqueda
-        return words.every(word => 
-          productName.includes(word) || 
-          productCode.includes(word) || 
-          productBrand.includes(word)
-        );
+        return words.every(word => {
+          // Coincidencia exacta rápida
+          if (productName.includes(word) || productCode.includes(word) || productBrand.includes(word)) {
+            return true;
+          }
+          // Coincidencia difusa por distancia de Levenshtein en palabras individuales
+          const nameWords = productName.split(/[\s,.\-\/]+/);
+          const brandWords = productBrand.split(/[\s,.\-\/]+/);
+          return nameWords.some(nw => isFuzzyMatch(nw, word)) || brandWords.some(bw => isFuzzyMatch(bw, word));
+        });
       });
     }
   }
@@ -349,6 +499,7 @@ function applyFilters() {
 // ─── EVENTOS SELECTORES ──────────────────────────────────────────────
 function filterCat(cat) {
   currentCat = cat;
+  currentSubCat = 'todos'; // Resetear subcategoría activa
   
   // Limpiar filtro por etiquetas (Tags) al cambiar de categoría
   activeTag = '';
@@ -367,6 +518,7 @@ function filterCat(cat) {
   });
   
   applyFilters();
+  renderSubCategories(); // Renderizar deslizador de subcategorías anidadas
 }
 
 function filterBrand(brandCode, event) {
@@ -392,12 +544,18 @@ function filterBrand(brandCode, event) {
   applyFilters();
 }
 
+let searchDebounceTimer;
 function handleSearch() {
   const input = document.getElementById('searchInput');
   if (input) {
     searchQuery = input.value.trim();
-    applyFilters();
-    showSuggestions(searchQuery); // Desplegar autocompletado Spotlight
+    
+    // Aplicar debouncing de 200ms para evitar múltiples barridos pesados de CPU al escribir rápido
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(() => {
+      applyFilters();
+      showSuggestions(searchQuery); // Desplegar autocompletado Spotlight
+    }, 200);
   }
 }
 
@@ -568,7 +726,7 @@ function calculateChange() {
 }
 
 function copyAlias() {
-  const aliasText = document.getElementById('transferAliasText')?.textContent || "CAPELLI.TUC.MP";
+  const aliasText = document.getElementById('transferAliasText')?.textContent || "clubcapelli.mp";
   navigator.clipboard.writeText(aliasText).then(() => {
     showToast('📋 ¡Alias copiado al portapapeles! Listo para transferir.');
   }).catch(() => {
@@ -587,21 +745,28 @@ function addItem(id, event) {
   
   updateAll(id);
   spawnParticle(id);
+  playSound('add');
   showToast(`🛒 ${item.name} agregado al pedido`);
 }
 
 function changeQty(id, delta, event) {
   if (event) event.stopPropagation();
   
-  cart[id] = Math.max(0, (cart[id] || 0) + delta);
+  const prevQty = cart[id] || 0;
+  cart[id] = Math.max(0, prevQty + delta);
   if (cart[id] === 0) delete cart[id];
+  
+  if (delta < 0 && prevQty > 0) playSound('remove');
   
   updateAll(id);
 }
 
 function changeQtyByKey(id, delta) {
-  cart[id] = Math.max(0, (cart[id] || 0) + delta);
+  const prevQty = cart[id] || 0;
+  cart[id] = Math.max(0, prevQty + delta);
   if (cart[id] === 0) delete cart[id];
+  
+  if (delta < 0 && prevQty > 0) playSound('remove');
   
   updateAll(parseInt(id));
 }
@@ -732,6 +897,28 @@ function renderCartPanel() {
   rows += `<div class="cart-total"><span>Total Final Estimado</span><span>${formatPrice(total)}</span></div>`;
   rows += '<div style="height:15px"></div>';
   
+  // ── CROSS-SELLING: Sugerencias Inteligentes ──
+  const crossItems = getCrossSellItems();
+  if (crossItems.length > 0) {
+    rows += `
+      <div class="cross-sell-section">
+        <div class="cross-sell-title">✨ También te puede interesar</div>
+        <div class="cross-sell-list">
+          ${crossItems.map(p => {
+            const p2 = isProfessional ? p.price_prof : p.price;
+            return `<div class="cross-sell-card" onclick="addCrossSell(${p.id})">
+              <div class="cs-emoji">${p.emoji}</div>
+              <div class="cs-info">
+                <div class="cs-name">${p.name.substring(0, 28)}${p.name.length > 28 ? '...' : ''}</div>
+                <div class="cs-price">${formatPrice(p2)}</div>
+              </div>
+              <button class="cs-add-btn" title="Agregar">+</button>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+  }
+  
   if (content) content.innerHTML = rows;
   if (form) form.style.display = 'block';
 }
@@ -793,7 +980,7 @@ function sendWhatsApp() {
       paymentDetails = `💵 *Medio de Pago:* Efectivo (Pago exacto)\n`;
     }
   } else {
-    paymentDetails = `🏦 *Medio de Pago:* Transferencia Bancaria (Alias brindado: CAPELLI.TUC.MP)\n`;
+    paymentDetails = `🏦 *Medio de Pago:* Transferencia Bancaria (Alias brindado: clubcapelli.mp)\n`;
   }
 
   let msg = `🛍️ *PEDIDO CLUB CAPELLI* 🛍️\n`;
@@ -833,10 +1020,14 @@ function sendWhatsApp() {
   // Respaldar copia del pedido para poder descargar el recibo físico después de limpiar el carro
   lastOrderCartCopy = { ...cart };
   
+  // Guardar en Historial de Pedidos
+  saveOrderToHistory(orderId, `${nombre} ${apellido}`, total, deliveryMethod);
+  
   // Redirección directa al número solicitado: +5493814647103
   const WA_TARGET = '5493814647103';
   window.open(`https://wa.me/${WA_TARGET}?text=${encodeURIComponent(msg)}`, '_blank');
   showToast(`📲 Redirigiendo a Club Capelli Tucumán...`);
+  playSound('order');
   
   // Cerrar el panel del carrito y abrir el recibo interactivo
   closeCart();
@@ -889,9 +1080,373 @@ function initScrollObserver() {
   document.querySelectorAll('.fade-section').forEach(el => observer.observe(el));
 }
 
+// ─── CAROUSEL AUTO-ROTATIVO DEL HERO BANNER (SLIDER COMPACTO) ───────
+function startHeroSlider() {
+  const slides = document.querySelectorAll('.hero-slide');
+  if (slides.length <= 1) return;
+  
+  let currentIndex = 0;
+  setInterval(() => {
+    slides[currentIndex].classList.remove('active');
+    currentIndex = (currentIndex + 1) % slides.length;
+    slides[currentIndex].classList.add('active');
+  }, 4000); // Rotar cada 4 segundos
+}
+
+// ════════════════════════════════════════════════════════════════════
+// ─── MÓDULO ÉLITE 1: MICRO-SONIDOS HÁPTICOS (Web Audio API) ─────────
+// ════════════════════════════════════════════════════════════════════
+let audioCtx = null;
+
+function getAudioCtx() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioCtx;
+}
+
+function playSound(type) {
+  try {
+    // Verificar si el usuario desactivó sonidos
+    if (safeStorage.getItem('capelli_sounds') === 'off') return;
+    const ctx = getAudioCtx();
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    if (type === 'add') {
+      // Sonido suave de "pop" al agregar al carrito
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(520, ctx.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(700, ctx.currentTime + 0.08);
+      gainNode.gain.setValueAtTime(0.12, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + 0.18);
+    } else if (type === 'remove') {
+      // Sonido descendente suave al quitar un producto
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(480, ctx.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.12);
+      gainNode.gain.setValueAtTime(0.08, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + 0.15);
+    } else if (type === 'order') {
+      // Fanfare corta de celebración al enviar pedido
+      const notes = [523, 659, 784];
+      notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.12);
+        g.gain.setValueAtTime(0.0, ctx.currentTime + i * 0.12);
+        g.gain.linearRampToValueAtTime(0.15, ctx.currentTime + i * 0.12 + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.12 + 0.18);
+        osc.start(ctx.currentTime + i * 0.12);
+        osc.stop(ctx.currentTime + i * 0.12 + 0.18);
+      });
+      return;
+    } else if (type === 'wishlist') {
+      // Tono suave de corazón
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(880, ctx.currentTime);
+      oscillator.frequency.setValueAtTime(1047, ctx.currentTime + 0.07);
+      gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + 0.2);
+    }
+  } catch (e) { /* Silenciar en contextos sin audio */ }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// ─── MÓDULO ÉLITE 2: LISTA DE FAVORITOS (WISHLIST) ──────────────────
+// ════════════════════════════════════════════════════════════════════
+function loadWishlist() {
+  const stored = safeStorage.getItem('capelli_wishlist');
+  if (stored) {
+    try {
+      wishlist = new Set(JSON.parse(stored));
+    } catch (e) {
+      wishlist = new Set();
+    }
+  }
+}
+
+function saveWishlist() {
+  safeStorage.setItem('capelli_wishlist', JSON.stringify([...wishlist]));
+}
+
+function toggleWishlist(id, event) {
+  if (event) event.stopPropagation();
+  const numId = parseInt(id);
+  if (wishlist.has(numId)) {
+    wishlist.delete(numId);
+    showToast('💔 Eliminado de favoritos');
+  } else {
+    wishlist.add(numId);
+    showToast('❤️ ¡Agregado a favoritos!');
+    playSound('wishlist');
+  }
+  saveWishlist();
+  // Actualizar ícono en la tarjeta visible
+  const btn = document.getElementById(`wb-${numId}`);
+  if (btn) {
+    btn.classList.toggle('active', wishlist.has(numId));
+    btn.textContent = wishlist.has(numId) ? '❤️' : '🤍';
+  }
+  // Actualizar contador del panel
+  updateWishlistBadge();
+}
+
+function updateWishlistBadge() {
+  const badge = document.getElementById('wishlistBadge');
+  if (badge) {
+    badge.textContent = wishlist.size;
+    badge.style.display = wishlist.size > 0 ? 'flex' : 'none';
+  }
+}
+
+function openWishlistPanel() {
+  const panel = document.getElementById('wishlistPanel');
+  const overlay = document.getElementById('wishlistOverlay');
+  if (panel) panel.classList.add('open');
+  if (overlay) overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderWishlistPanel();
+  playSound('wishlist');
+}
+
+function closeWishlistPanel() {
+  const panel = document.getElementById('wishlistPanel');
+  const overlay = document.getElementById('wishlistOverlay');
+  if (panel) panel.classList.remove('open');
+  if (overlay) overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderWishlistPanel() {
+  const container = document.getElementById('wishlistContent');
+  if (!container) return;
+  
+  if (wishlist.size === 0) {
+    container.innerHTML = `
+      <div class="cart-empty">
+        <div class="cart-empty-emoji">🤍</div>
+        <div class="cart-empty-text">Tu lista de favoritos está vacía.<br>Tocá el corazón 🤍 en cualquier producto para guardarlo aquí.</div>
+      </div>`;
+    return;
+  }
+  
+  let html = '<div class="wishlist-list">';
+  wishlist.forEach(id => {
+    const item = MENU.find(i => i.id === id);
+    if (!item) return;
+    const activePrice = isProfessional ? item.price_prof : item.price;
+    html += `
+      <div class="wishlist-row">
+        <div class="wishlist-row-emoji">${item.emoji}</div>
+        <div class="wishlist-row-info">
+          <div class="wishlist-row-name">${item.name}</div>
+          <div class="wishlist-row-brand">${item.brand} · ${item.content}</div>
+          <div class="wishlist-row-price">${formatPrice(activePrice)}</div>
+        </div>
+        <div class="wishlist-row-actions">
+          <button class="wl-add-btn" onclick="addFromWishlist(${item.id})" title="Agregar al pedido">🛒</button>
+          <button class="wl-remove-btn" onclick="toggleWishlist(${item.id}, event)" title="Quitar de favoritos">✕</button>
+        </div>
+      </div>`;
+  });
+  html += '</div>';
+  html += `<div class="wl-footer-actions">`;
+  html += `<button class="wl-add-all-btn" onclick="addAllFromWishlist()">🛒 Agregar Todos al Pedido</button>`;
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+function addFromWishlist(id) {
+  cart[id] = (cart[id] || 0) + 1;
+  updateAll(id);
+  spawnParticle(id);
+  playSound('add');
+  const item = MENU.find(i => i.id === id);
+  showToast(`🛒 ${item?.name} agregado desde Favoritos`);
+  renderWishlistPanel();
+}
+
+function addAllFromWishlist() {
+  if (wishlist.size === 0) return;
+  wishlist.forEach(id => {
+    cart[id] = (cart[id] || 0) + 1;
+  });
+  updateCartBadge();
+  playSound('order');
+  showToast(`🛒 ${wishlist.size} favorito(s) agregados al pedido!`);
+  closeWishlistPanel();
+  applyFilters();
+}
+
+// ════════════════════════════════════════════════════════════════════
+// ─── MÓDULO ÉLITE 3: MOTOR DE VENTA CRUZADA (CROSS-SELLING) ──────────
+// ════════════════════════════════════════════════════════════════════
+function getCrossSellItems() {
+  const cartIds = Object.keys(cart).map(Number);
+  if (cartIds.length === 0) return [];
+  
+  // Obtener categorías en el carrito
+  const cartCats = new Set(cartIds.map(id => MENU.find(i => i.id === id)?.cat).filter(Boolean));
+  
+  // Buscar productos de misma categoría no incluidos en el carrito
+  const candidates = MENU.filter(item => {
+    if (cart[item.id]) return false; // Ya en el carrito
+    if (!cartCats.has(item.cat)) return false; // Distinta categoría
+    return true;
+  });
+  
+  // Priorizar por items más populares (heurística: IDs que terminan en dígito bajo)
+  candidates.sort((a, b) => (a.id % 13) - (b.id % 13));
+  
+  // Devolver máximo 4 sugerencias
+  return candidates.slice(0, 4);
+}
+
+function addCrossSell(id) {
+  cart[id] = (cart[id] || 0) + 1;
+  updateAll(id);
+  spawnParticle(id);
+  playSound('add');
+  const item = MENU.find(i => i.id === id);
+  showToast(`✨ ${item?.name} agregado desde Sugerencias`);
+  renderCartPanel();
+}
+
+// ════════════════════════════════════════════════════════════════════
+// ─── MÓDULO ÉLITE 4: HISTORIAL DE PEDIDOS ───────────────────────────
+// ════════════════════════════════════════════════════════════════════
+function saveOrderToHistory(orderId, clientName, total, deliveryMethod) {
+  let history = [];
+  const stored = safeStorage.getItem('capelli_order_history');
+  if (stored) {
+    try { history = JSON.parse(stored); } catch (e) { history = []; }
+  }
+  
+  // Guardar snapshot del carrito actual
+  const cartSnapshot = Object.entries(cart).map(([idStr, qty]) => {
+    const item = MENU.find(i => i.id === parseInt(idStr));
+    return item ? { id: item.id, name: item.name, qty, code: item.code } : null;
+  }).filter(Boolean);
+  
+  history.unshift({
+    orderId,
+    clientName,
+    total,
+    deliveryMethod,
+    date: new Date().toLocaleString('es-AR'),
+    items: cartSnapshot
+  });
+  
+  // Mantener solo los últimos 10 pedidos
+  if (history.length > 10) history = history.slice(0, 10);
+  safeStorage.setItem('capelli_order_history', JSON.stringify(history));
+  updateHistoryBadge();
+}
+
+function updateHistoryBadge() {
+  const stored = safeStorage.getItem('capelli_order_history');
+  const history = stored ? JSON.parse(stored) : [];
+  const badge = document.getElementById('historyBadge');
+  if (badge) {
+    badge.textContent = history.length;
+    badge.style.display = history.length > 0 ? 'flex' : 'none';
+  }
+}
+
+function openHistoryPanel() {
+  const panel = document.getElementById('historyPanel');
+  const overlay = document.getElementById('historyOverlay');
+  if (panel) panel.classList.add('open');
+  if (overlay) overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderHistoryPanel();
+}
+
+function closeHistoryPanel() {
+  const panel = document.getElementById('historyPanel');
+  const overlay = document.getElementById('historyOverlay');
+  if (panel) panel.classList.remove('open');
+  if (overlay) overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderHistoryPanel() {
+  const container = document.getElementById('historyContent');
+  if (!container) return;
+  
+  const stored = safeStorage.getItem('capelli_order_history');
+  const history = stored ? JSON.parse(stored) : [];
+  
+  if (history.length === 0) {
+    container.innerHTML = `
+      <div class="cart-empty">
+        <div class="cart-empty-emoji">📋</div>
+        <div class="cart-empty-text">Todavía no tenés pedidos registrados.<br>Tu historial aparecerá aquí luego de tu primer compra.</div>
+      </div>`;
+    return;
+  }
+  
+  let html = '';
+  history.forEach(order => {
+    const itemsPreview = order.items.slice(0, 3).map(i => `${i.qty}x ${i.name.substring(0,20)}`).join(', ');
+    const moreCount = order.items.length - 3;
+    html += `
+      <div class="history-order-card">
+        <div class="hoc-header">
+          <div>
+            <div class="hoc-id">${order.orderId}</div>
+            <div class="hoc-date">${order.date}</div>
+          </div>
+          <div class="hoc-total">${formatPrice(order.total)}</div>
+        </div>
+        <div class="hoc-client">👤 ${order.clientName} · ${order.deliveryMethod === 'retiro' ? '🏢 Retiro' : '🚚 Envío'}</div>
+        <div class="hoc-items">${itemsPreview}${moreCount > 0 ? ` y ${moreCount} más...` : ''}</div>
+        <button class="hoc-reorder-btn" onclick="reorderFromHistory(${JSON.stringify(order.items).replace(/"/g, '&quot;')})">
+          🔄 Repetir este pedido
+        </button>
+      </div>`;
+  });
+  
+  container.innerHTML = html;
+}
+
+function reorderFromHistory(items) {
+  if (!items || items.length === 0) return;
+  items.forEach(orderItem => {
+    cart[orderItem.id] = (cart[orderItem.id] || 0) + orderItem.qty;
+  });
+  updateCartBadge();
+  playSound('order');
+  showToast(`🔄 ${items.length} producto(s) cargados al carrito!`);
+  closeHistoryPanel();
+  applyFilters();
+  openCart();
+}
+
 // ─── INICIALIZACIÓN ────────────────────────────────────────────────
 function init() {
   initTheme(); // Inicializar el modo oscuro inteligente según preferencia u horario
+  
+  // Registrar Service Worker para soporte PWA y modo Offline completo
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('PWA Service Worker registrado con éxito:', reg.scope))
+        .catch(err => console.warn('Fallo al registrar PWA Service Worker:', err));
+    });
+  }
   
   // Splash Screen Fade out
   const splash = document.getElementById('splash');
@@ -907,9 +1462,14 @@ function init() {
   
   // Inicializar filtros en modo "Todos los productos y categorías"
   currentCat = 'todos';
+  currentSubCat = 'todos';
   currentBrandCode = 'all';
   searchQuery = '';
   applyFilters();
+  renderSubCategories();
+  
+  // Iniciar carrusel auto-rotativo del Hero Banner
+  startHeroSlider();
   
   // Setup Scroll e Intersecciones
   setupInfiniteScroll();
@@ -917,6 +1477,11 @@ function init() {
   
   // Cargar datos guardados del cliente
   loadClientData();
+  
+  // Inicializar módulos élite
+  loadWishlist();
+  updateWishlistBadge();
+  updateHistoryBadge();
 }
 
 // ─── MODAL INFORMATIVO DE DETALLE DE PRODUCTOS ────────────────────────
@@ -1117,12 +1682,14 @@ function showSuggestions(q) {
 
   suggestionsBox.innerHTML = matches.map(item => {
     const activePrice = isProfessional ? item.price_prof : item.price;
+    const displayName = highlightText(item.name, q);
+    const displayBrand = highlightText(item.brand, q);
     return `
       <div class="suggestion-item" onclick="selectSuggestion(${item.id})">
         <span class="suggestion-emoji">${item.emoji || '🧪'}</span>
         <div class="suggestion-info">
-          <span class="suggestion-brand">${item.brand}</span>
-          <span class="suggestion-name">${item.name}</span>
+          <span class="suggestion-brand">${displayBrand}</span>
+          <span class="suggestion-name">${displayName}</span>
         </div>
         <span class="suggestion-price">${formatPrice(activePrice)}</span>
       </div>
