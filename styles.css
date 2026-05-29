@@ -261,6 +261,7 @@ h1, h2, h3, h4 {
   background: linear-gradient(135deg, var(--primary) 0%, #ff7300 100%); /* Naranja Vibrante Capelli */
   box-shadow: 0 4px 20px rgba(230, 95, 0, 0.15);
   transition: var(--transition-smooth);
+  padding-top: env(safe-area-inset-top, 0px); /* Soporte notches y dynamic islands en iOS */
   padding-bottom: 8px;
 }
 
@@ -1428,7 +1429,7 @@ h1, h2, h3, h4 {
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   border-top: 1px solid rgba(230, 95, 0, 0.25);
-  padding: 12px 20px;
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px)) 20px; /* Soporte barra virtual de inicio en iOS */
   box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.2);
   z-index: 900;
   display: flex;
@@ -1770,6 +1771,17 @@ h1, h2, h3, h4 {
   .form-grid {
     grid-template-columns: 1fr;
   }
+  .delivery-toggle-wrap,
+  .payment-toggle-wrap {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  .delivery-btn,
+  .payment-btn {
+    width: 100% !important;
+    padding: 10px !important;
+    font-size: 0.82rem !important;
+  }
 }
 
 .form-section {
@@ -1900,6 +1912,9 @@ h1, h2, h3, h4 {
   }
   .panel-header-wrap {
     padding: 15px 24px 20px 24px;
+  }
+  .panel-scroll-area {
+    padding-bottom: calc(45px + env(safe-area-inset-bottom, 0px)) !important; /* Más margen abajo para evitar solapamientos con la barra virtual iOS */
   }
 }
 
@@ -2444,7 +2459,7 @@ h1, h2, h3, h4 {
   }
   
   .pm-content-wrap {
-    padding: 20px;
+    padding: 20px 20px calc(20px + env(safe-area-inset-bottom, 0px)) 20px !important;
     gap: 12px;
   }
   
@@ -2891,7 +2906,7 @@ input:checked + .slider-premium:before {
 /* Responsividad adicional Hero y spacing estilo PedidosYa */
 @media (max-width: 768px) {
   .hero-banner-wrap {
-    margin-top: 170px !important; /* Más espacio por la navbar fija colapsada */
+    margin-top: 20px !important; /* Spacing limpio y fluido gracias al flujo sticky de la navbar */
     padding: 0 12px !important;
   }
   .hero-banner-card {
