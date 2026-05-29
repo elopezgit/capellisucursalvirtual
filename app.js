@@ -1023,22 +1023,134 @@ function sendWhatsApp() {
   // Guardar en Historial de Pedidos
   saveOrderToHistory(orderId, `${nombre} ${apellido}`, total, deliveryMethod);
   
-  // Redirección directa al número solicitado: +5493814647103
+  // Vaciar carrito y cerrar panel ANTES de mostrar celebración
+  const cartSnapshot = { ...cart };
+  cart = {};
+  closeCart();
+  updateCartBadge();
+  applyFilters();
+  
+  // URL de WhatsApp lista para disparar después del countdown
   const WA_TARGET = '5493814647103';
-  window.open(`https://wa.me/${WA_TARGET}?text=${encodeURIComponent(msg)}`, '_blank');
-  showToast(`📲 Redirigiendo a Club Capelli Tucumán...`);
+  const waUrl = `https://wa.me/${WA_TARGET}?text=${encodeURIComponent(msg)}`;
+  
+  // 🎉 Abrir modal de celebración → luego WhatsApp → luego recibo
+  openCelebrationModal({
+    orderId,
+    clientName: `${nombre} ${apellido}`,
+    tel,
+    deliveryMethod,
+    total,
+    waUrl
+  });
+}
+
+// ─── MODAL DE CELEBRACIÓN DE COMPRA + COUNTDOWN A WHATSAPP ─────────
+let _celebrationCountdownTimer = null;
+
+function openCelebrationModal({ orderId, clientName, tel, deliveryMethod, total, waUrl }) {
   playSound('order');
   
-  // Cerrar el panel del carrito y abrir el recibo interactivo
-  closeCart();
-  openReceiptModal(orderId, `${nombre} ${apellido}`, tel, deliveryMethod, total);
-  
-  // Vaciar carrito activo y actualizar
-  cart = {};
-  updateAll();
+  const overlay = document.getElementById('celebrationOverlay');
+  const modal   = document.getElementById('celebrationModal');
+  if (!overlay || !modal) return;
+
+  // Rellenar datos
+  document.getElementById('celebOrderId').textContent    = orderId;
+  document.getElementById('celebTotal').textContent      = formatPrice(total);
+  document.getElementById('celebClient').textContent     = clientName;
+  document.getElementById('celebDelivery').textContent   = deliveryMethod === 'retiro' ? '🏢 Retiro en Sucursal' : '🚚 Envío a Domicilio';
+
+  // Mostrar modal
+  overlay.classList.add('open');
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Lanzar partículas de confetti emoji
+  spawnCelebrationEmojis();
+
+  // Countdown de 3 segundos con animación de anillo SVG
+  let seconds = 3;
+  updateCelebCountdown(seconds);
+
+  clearTimeout(_celebrationCountdownTimer);
+
+  function tick() {
+    seconds--;
+    updateCelebCountdown(seconds);
+    if (seconds <= 0) {
+      // Abrir WhatsApp
+      window.open(waUrl, '_blank');
+      showToast('📲 ¡Solicitud enviada! Conectándote con un asesor...');
+      // Cerrar modal de celebración y abrir recibo
+      closeCelebrationModal();
+      openReceiptModal(orderId, clientName, tel, deliveryMethod, total);
+    } else {
+      _celebrationCountdownTimer = setTimeout(tick, 1000);
+    }
+  }
+
+  _celebrationCountdownTimer = setTimeout(tick, 1000);
+}
+
+function updateCelebCountdown(n) {
+  const numEl  = document.getElementById('celebCountdownNum');
+  const numEl2 = document.getElementById('celebCountdownNum2');
+  const ringEl = document.getElementById('celebCountdownRing');
+  if (numEl)  numEl.textContent  = n;
+  if (numEl2) numEl2.textContent = n;
+  // stroke-dashoffset: 0 = anillo lleno, 283 = vacío (circunferencia r=45)
+  if (ringEl) {
+    const circumference = 283;
+    const pct = n / 3; // 3→1, 2→0.67, 1→0.33, 0→0
+    ringEl.style.strokeDashoffset = String(circumference * (1 - pct));
+  }
+}
+
+function closeCelebrationModal() {
+  clearTimeout(_celebrationCountdownTimer);
+  const overlay = document.getElementById('celebrationOverlay');
+  const modal   = document.getElementById('celebrationModal');
+  if (overlay) overlay.classList.remove('open');
+  if (modal)   modal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function skipCelebrationAndOpenWA() {
+  clearTimeout(_celebrationCountdownTimer);
+  const waBtn = document.getElementById('celebSkipBtn');
+  if (waBtn) {
+    const waUrl = waBtn.dataset.url;
+    if (waUrl) window.open(waUrl, '_blank');
+  }
+  const orderId       = document.getElementById('celebOrderId')?.textContent || '';
+  const clientName    = document.getElementById('celebClient')?.textContent || '';
+  const tel           = '';
+  const deliveryMethod = document.getElementById('celebDelivery')?.textContent?.includes('Retiro') ? 'retiro' : 'envio';
+  const totalText     = document.getElementById('celebTotal')?.textContent || '$0';
+  const total         = parseInt(totalText.replace(/\D/g, '')) || 0;
+  closeCelebrationModal();
+  openReceiptModal(orderId, clientName, tel, deliveryMethod, total);
+}
+
+function spawnCelebrationEmojis() {
+  const emojis = ['🎉','✨','💫','🌟','💎','🛍️','💅','💇','🌸','🎊'];
+  for (let i = 0; i < 18; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'celeb-emoji-particle';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.left = (10 + Math.random() * 80) + 'vw';
+      el.style.animationDelay = (Math.random() * 0.5) + 's';
+      el.style.fontSize = (1.2 + Math.random() * 1.2) + 'rem';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 2200);
+    }, i * 60);
+  }
 }
 
 // ─── TOAST NOTIFICATION PREMIUM ────────────────────────────────────
+
 function showToast(msg) {
   const t = document.getElementById('toast');
   if (!t) return;
