@@ -1,16 +1,16 @@
-/* ─── HOSTERÍA ATAHUALPA YUPANQUI - PREMIUM ROOM SERVICE CSS ─── */
+﻿/* â”€â”€â”€ HOSTERÃA ATAHUALPA YUPANQUI - PREMIUM ROOM SERVICE CSS â”€â”€â”€ */
 
-/* ── variables de diseño ── */
+/* â”€â”€ variables de diseÃ±o â”€â”€ */
 :root {
   --primary: #e65f00;        /* Naranja Capelli Vibrante */
   --primary-light: #ff873d;  /* Naranja Brillante Soft */
-  --accent: #121212;         /* Carbón Lujoso / Negro */
+  --accent: #121212;         /* CarbÃ³n Lujoso / Negro */
   --accent-light: #2c2c2c;   /* Gris Oscuro */
   --accent-glow: rgba(230, 95, 0, 0.4);
   --bg-cream: #f3f4f6;       /* Gris Suave Premium (Estilo PedidosYa) */
   --bg-card: #ffffff;
   --text-dark: #1f1f1f;      /* Negro Suave */
-  --text-muted: #6b6b6b;     /* Gris Desvaído */
+  --text-muted: #6b6b6b;     /* Gris DesvaÃ­do */
   --text-light: #ffffff;     /* Blanco Puro */
   --shadow-light: 0 10px 30px rgba(230, 95, 0, 0.04);
   --shadow-premium: 0 20px 40px rgba(18, 18, 18, 0.08);
@@ -23,7 +23,7 @@
   --transition-smooth: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* ── reseteos base ── */
+/* â”€â”€ reseteos base â”€â”€ */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -52,7 +52,7 @@ h1, h2, h3, h4 {
   letter-spacing: -0.01em;
 }
 
-/* ── scrollbar personalizada ── */
+/* â”€â”€ scrollbar personalizada â”€â”€ */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -68,7 +68,7 @@ h1, h2, h3, h4 {
   background: var(--accent);
 }
 
-/* ── splash screen cinematográfico ── */
+/* â”€â”€ splash screen cinematogrÃ¡fico â”€â”€ */
 #splash {
   position: fixed;
   top: 0;
@@ -197,7 +197,7 @@ h1, h2, h3, h4 {
   animation: fillLoader 4.2s cubic-bezier(0.1, 0.8, 0.1, 1) forwards;
 }
 
-/* ── animaciones splash cinematográficas ── */
+/* â”€â”€ animaciones splash cinematogrÃ¡ficas â”€â”€ */
 @keyframes logoZoomSlow {
   0% {
     transform: scale(0.85);
@@ -251,7 +251,7 @@ h1, h2, h3, h4 {
   100% { left: 150%; }
 }
 
-/* ── navbar superior glassmorphic ── */
+/* â”€â”€ navbar superior glassmorphic â”€â”€ */
 .header {
   position: sticky; /* Sticky header para evitar hacks de margin-top fijos y garantizar 0 solapamientos */
   top: 0;
@@ -351,7 +351,7 @@ h1, h2, h3, h4 {
 
 .search-bar input {
   width: 100%;
-  background: #ffffff; /* Fondo blanco sólido */
+  background: #ffffff; /* Fondo blanco sÃ³lido */
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 30px;
   padding: 12px 20px 12px 48px;
@@ -373,9 +373,9 @@ h1, h2, h3, h4 {
   box-shadow: 0 0 15px rgba(230, 95, 0, 0.2);
 }
 
-/* botón flotante del carrito en header */
+/* botÃ³n flotante del carrito en header */
 .cart-fab {
-  background: var(--accent); /* Carbón Lujoso */
+  background: var(--accent); /* CarbÃ³n Lujoso */
   border: none;
   outline: none;
   width: 48px;
@@ -428,7 +428,7 @@ h1, h2, h3, h4 {
   100% { transform: scale(1); }
 }
 
-/* ── hero section fullscreen ── */
+/* â”€â”€ hero section fullscreen â”€â”€ */
 .hero-carousel {
   position: relative;
   width: 100%;
@@ -634,7 +634,7 @@ h1, h2, h3, h4 {
   }
 }
 
-/* ── sección experiencias premium ── */
+/* â”€â”€ secciÃ³n experiencias premium â”€â”€ */
 .experiences-wrap {
   max-width: 1400px;
   margin: 60px auto;
@@ -774,7 +774,7 @@ h1, h2, h3, h4 {
   margin-top: 5px;
 }
 
-/* ── banner historial ── */
+/* â”€â”€ banner historial â”€â”€ */
 .history-banner {
   max-width: 1400px;
   margin: 40px auto;
@@ -857,7 +857,7 @@ h1, h2, h3, h4 {
   }
 }
 
-/* ── hero slider compacto auto-rotativo ── */
+/* â”€â”€ hero slider compacto auto-rotativo â”€â”€ */
 .hero-slider-wrap {
   max-width: 1400px;
   margin: 15px auto;
@@ -977,7 +977,7 @@ h1, h2, h3, h4 {
   color: #ffffff;
 }
 
-/* ── categorías estilo pedidosya ── */
+/* â”€â”€ categorÃ­as estilo pedidosya â”€â”€ */
 .cats-wrap {
   max-width: 1400px;
   margin: 30px auto 25px auto;
@@ -1058,7 +1058,7 @@ h1, h2, h3, h4 {
   color: var(--primary);
 }
 
-/* ── menú de platos ── */
+/* â”€â”€ menÃº de platos â”€â”€ */
 .menu-wrap {
   max-width: 1400px;
   margin: 0 auto 60px auto;
@@ -1244,7 +1244,7 @@ h1, h2, h3, h4 {
   opacity: 0.5;
 }
 
-/* información del plato */
+/* informaciÃ³n del plato */
 .item-info {
   padding: 24px;
   display: flex;
@@ -1371,8 +1371,8 @@ h1, h2, h3, h4 {
   color: var(--primary);
 }
 
-/* ── footer premium ── */
-/* ── footer premium minimalista ── */
+/* â”€â”€ footer premium â”€â”€ */
+/* â”€â”€ footer premium minimalista â”€â”€ */
 .app-footer {
   background-color: #121212; /* Fondo de lujo extremo */
   border-top: 2px solid var(--accent);
@@ -1431,7 +1431,7 @@ h1, h2, h3, h4 {
   margin-top: 5px;
 }
 
-/* ── barra inferior fija minimalista ── */
+/* â”€â”€ barra inferior fija minimalista â”€â”€ */
 .bottom-bar {
   position: fixed;
   bottom: 0;
@@ -1509,7 +1509,7 @@ h1, h2, h3, h4 {
   font-weight: 800;
 }
 
-/* ── panel de carrito y checkout premium ── */
+/* â”€â”€ panel de carrito y checkout premium â”€â”€ */
 .panel-overlay {
   position: fixed;
   top: 0;
@@ -1870,7 +1870,7 @@ h1, h2, h3, h4 {
   border-color: var(--accent);
 }
 
-/* botón de confirmación whatsapp */
+/* botÃ³n de confirmaciÃ³n whatsapp */
 .wa-btn {
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
   color: var(--text-light);
@@ -1926,11 +1926,11 @@ h1, h2, h3, h4 {
     padding: 15px 24px 20px 24px;
   }
   .panel-scroll-area {
-    padding-bottom: calc(45px + env(safe-area-inset-bottom, 0px)) !important; /* Más margen abajo para evitar solapamientos con la barra virtual iOS */
+    padding-bottom: calc(45px + env(safe-area-inset-bottom, 0px)) !important; /* MÃ¡s margen abajo para evitar solapamientos con la barra virtual iOS */
   }
 }
 
-/* ── micro-animaciones y partículas ── */
+/* â”€â”€ micro-animaciones y partÃ­culas â”€â”€ */
 .particle {
   position: absolute;
   font-size: 1.5rem;
@@ -1953,7 +1953,7 @@ h1, h2, h3, h4 {
   }
 }
 
-/* ── toast premium notification ── */
+/* â”€â”€ toast premium notification â”€â”€ */
 .toast {
   position: fixed;
   bottom: 100px;
@@ -1979,7 +1979,7 @@ h1, h2, h3, h4 {
   visibility: visible;
 }
 
-/* ── skeleton loader general ── */
+/* â”€â”€ skeleton loader general â”€â”€ */
 .fade-section {
   opacity: 1;
   transform: translateY(0);
@@ -1991,7 +1991,7 @@ h1, h2, h3, h4 {
   transform: translateY(0);
 }
 
-/* ── BARRA DE ESTADO DE SUITE (INTEGRACIÓN MINIMALISTA DE LUJO) ── */
+/* â”€â”€ BARRA DE ESTADO DE SUITE (INTEGRACIÃ“N MINIMALISTA DE LUJO) â”€â”€ */
 .suite-status-bar {
   max-width: 600px;
   margin: 30px auto 15px auto;
@@ -2069,7 +2069,7 @@ h1, h2, h3, h4 {
   letter-spacing: 0.02em;
 }
 
-/* ── PEDIDOS YA ERGONOMIC OVERRIDES (DISEÑO ALTA DENSIDAD MÓVIL) ── */
+/* â”€â”€ PEDIDOS YA ERGONOMIC OVERRIDES (DISEÃ‘O ALTA DENSIDAD MÃ“VIL) â”€â”€ */
 @media (max-width: 576px) {
   .suite-status-bar {
     margin: 20px 16px 10px 16px;
@@ -2134,7 +2134,7 @@ h1, h2, h3, h4 {
     line-height: 1.35 !important;
     margin-bottom: 2px !important;
     display: -webkit-box !important;
-    -webkit-line-clamp: 2 !important; /* Soporta hasta 2 líneas */
+    -webkit-line-clamp: 2 !important; /* Soporta hasta 2 lÃ­neas */
     -webkit-box-orient: vertical !important;
     overflow: hidden !important;
   }
@@ -2151,7 +2151,7 @@ h1, h2, h3, h4 {
   }
 
   .item-tags {
-    display: none !important; /* Optimizar espacio móvil */
+    display: none !important; /* Optimizar espacio mÃ³vil */
   }
 
   .item-footer {
@@ -2159,7 +2159,7 @@ h1, h2, h3, h4 {
     padding-top: 0 !important;
     margin-top: auto !important;
     display: flex !important;
-    flex-direction: row !important; /* Precio y botón en una sola línea horizontal */
+    flex-direction: row !important; /* Precio y botÃ³n en una sola lÃ­nea horizontal */
     justify-content: space-between !important;
     align-items: center !important;
     width: 100% !important;
@@ -2171,7 +2171,7 @@ h1, h2, h3, h4 {
     color: var(--primary) !important;
   }
 
-  /* Botón más circular ultra moderno */
+  /* BotÃ³n mÃ¡s circular ultra moderno */
   .qty-add-btn {
     width: 32px !important;
     height: 32px !important;
@@ -2198,7 +2198,7 @@ h1, h2, h3, h4 {
     border: 1px solid rgba(0, 0, 0, 0.05) !important;
     border-radius: 20px !important;
     padding: 2px !important;
-    width: 80px !important; /* Tamaño compacto píldora */
+    width: 80px !important; /* TamaÃ±o compacto pÃ­ldora */
     box-shadow: var(--shadow-inset) !important;
   }
 
@@ -2215,7 +2215,7 @@ h1, h2, h3, h4 {
   }
 }
 
-/* ── GOURMET PRODUCT DETAIL MODAL ── */
+/* â”€â”€ GOURMET PRODUCT DETAIL MODAL â”€â”€ */
 .product-modal-overlay {
   position: fixed;
   top: 0;
@@ -2480,7 +2480,7 @@ h1, h2, h3, h4 {
   }
 }
 
-/* ── NUEVOS COMPONENTES CLUB CAPELLI PREMIUM ── */
+/* â”€â”€ NUEVOS COMPONENTES CLUB CAPELLI PREMIUM â”€â”€ */
 
 /* Switch Premium Toggle */
 .toggle-prof-wrap {
@@ -2717,7 +2717,7 @@ input:checked + .slider-premium:before {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
-/* Detalle de sub-cuadrícula en formulario */
+/* Detalle de sub-cuadrÃ­cula en formulario */
 .form-grid-inner {
   display: flex;
   gap: 15px;
@@ -2735,9 +2735,9 @@ input:checked + .slider-premium:before {
   }
 }
 
-/* ── ESTILOS ADICIONALES PAGO Y OVERLAPS CELULAR ── */
+/* â”€â”€ ESTILOS ADICIONALES PAGO Y OVERLAPS CELULAR â”€â”€ */
 
-/* Contenedor de controles en forma de píldora */
+/* Contenedor de controles en forma de pÃ­ldora */
 .item-controls-pill {
   display: flex;
   align-items: center;
@@ -2855,13 +2855,13 @@ input:checked + .slider-premium:before {
   transform: translateY(-1px);
 }
 
-/* Arreglos del footer de tarjeta en Celulares para evitar superposición */
+/* Arreglos del footer de tarjeta en Celulares para evitar superposiciÃ³n */
 @media (max-width: 768px) {
   .item-footer {
     flex-direction: column !important;
     align-items: stretch !important;
     gap: 10px !important;
-    margin-top: auto !important; /* Mantiene el botón siempre abajo */
+    margin-top: auto !important; /* Mantiene el botÃ³n siempre abajo */
     border-top: 1px dashed rgba(18, 18, 18, 0.06) !important;
     padding-top: 10px !important;
   }
@@ -2943,7 +2943,7 @@ input:checked + .slider-premium:before {
     text-align: center !important;
   }
   .hbc-desc {
-    display: none !important; /* Ocultar en móvil para priorizar visibilidad del catálogo en pantalla */
+    display: none !important; /* Ocultar en mÃ³vil para priorizar visibilidad del catÃ¡logo en pantalla */
   }
   .hbc-actions {
     justify-content: center !important;
@@ -2997,7 +2997,7 @@ input:checked + .slider-premium:before {
   }
 }
 
-/* ── MODO PROFESIONAL ULTRA PROMINENTE (ESTILO GOLD DE LUXE) ── */
+/* â”€â”€ MODO PROFESIONAL ULTRA PROMINENTE (ESTILO GOLD DE LUXE) â”€â”€ */
 .toggle-prof-wrap {
   display: flex;
   align-items: center;
@@ -3025,7 +3025,7 @@ input:checked + .slider-premium:before {
   display: inline-block;
 }
 
-/* Rediseño del Switch Premium con Estética Gold cuando se activa */
+/* RediseÃ±o del Switch Premium con EstÃ©tica Gold cuando se activa */
 .switch-premium {
   position: relative;
   display: inline-block;
@@ -3071,7 +3071,7 @@ input:checked + .slider-premium:before {
   background-color: #121212; /* Knob oscuro */
 }
 
-/* ── DISEÑO DE RESULTADOS DE BÚSQUEDA DESTACADOS (BADGES ELEVADOS) ── */
+/* â”€â”€ DISEÃ‘O DE RESULTADOS DE BÃšSQUEDA DESTACADOS (BADGES ELEVADOS) â”€â”€ */
 .section-label {
   display: flex !important;
   justify-content: space-between !important;
@@ -3117,7 +3117,7 @@ input:checked + .slider-premium:before {
   }
 }
 
-/* ── DISPOSITIVOS CHICOS Y MEDIANOS OVERRIDES (IPHONE 16 / TABLETS / ETC.) ── */
+/* â”€â”€ DISPOSITIVOS CHICOS Y MEDIANOS OVERRIDES (IPHONE 16 / TABLETS / ETC.) â”€â”€ */
 @media (max-width: 576px) {
   .header-inner {
     flex-wrap: wrap !important;
@@ -3130,11 +3130,11 @@ input:checked + .slider-premium:before {
   }
   
   .cart-fab {
-    order: 2 !important; /* El botón de carrito se alinea a la derecha del logo */
+    order: 2 !important; /* El botÃ³n de carrito se alinea a la derecha del logo */
   }
   
   .toggle-prof-wrap {
-    order: 3 !important; /* Baja a una nueva línea de ancho completo */
+    order: 3 !important; /* Baja a una nueva lÃ­nea de ancho completo */
     width: 100% !important;
     justify-content: space-between !important;
     margin-top: 2px !important;
@@ -3174,7 +3174,7 @@ input:checked + .slider-premium:before {
   }
   
   .hero-banner-wrap {
-    margin-top: 15px !important; /* Spacing limpio porque el header sticky expande su altura automáticamente */
+    margin-top: 15px !important; /* Spacing limpio porque el header sticky expande su altura automÃ¡ticamente */
     padding: 0 12px !important;
   }
   
@@ -3183,9 +3183,9 @@ input:checked + .slider-premium:before {
   }
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   ── 🌟 ESTILOS MODO OSCURO INTELIGENTE, VOZ, TAGS, SUGGESTIONS Y TICKET ──
-   ────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   â”€â”€ ðŸŒŸ ESTILOS MODO OSCURO INTELIGENTE, VOZ, TAGS, SUGGESTIONS Y TICKET â”€â”€
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 /* 1. MODO OSCURO PREMIUM (PIZARRA CUIDADO VISUAL) */
 .dark {
@@ -3208,7 +3208,7 @@ body, html, .menu-item, .cat-card, .brand-card, .bottom-bar, .panel, .product-mo
               box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
 }
 
-/* Estilos de Switch/Botón del tema en header */
+/* Estilos de Switch/BotÃ³n del tema en header */
 .theme-toggle-btn {
   background: rgba(255, 255, 255, 0.12);
   border: none;
@@ -3230,7 +3230,7 @@ body, html, .menu-item, .cat-card, .brand-card, .bottom-bar, .panel, .product-mo
   transform: scale(1.08) rotate(15deg);
 }
 
-/* 2. BÚSQUEDA POR VOZ (CON EFECTO SONAR ROJO) */
+/* 2. BÃšSQUEDA POR VOZ (CON EFECTO SONAR ROJO) */
 .voice-btn {
   transition: var(--transition-smooth);
   border-radius: 50%;
@@ -3335,7 +3335,7 @@ body, html, .menu-item, .cat-card, .brand-card, .bottom-bar, .panel, .product-mo
   color: var(--text-dark);
 }
 
-/* 4. PASTILLAS DE TAGS RÁPIDOS */
+/* 4. PASTILLAS DE TAGS RÃPIDOS */
 .quick-tags-wrap {
   display: flex;
   gap: 10px;
@@ -3387,7 +3387,7 @@ body, html, .menu-item, .cat-card, .brand-card, .bottom-bar, .panel, .product-mo
   box-shadow: 0 5px 12px rgba(255, 215, 0, 0.3) !important;
 }
 
-/* Estilos para el texto resaltado de búsqueda */
+/* Estilos para el texto resaltado de bÃºsqueda */
 .highlight-text {
   background-color: rgba(230, 95, 0, 0.18) !important;
   color: var(--primary) !important;
@@ -3402,7 +3402,7 @@ body, html, .menu-item, .cat-card, .brand-card, .bottom-bar, .panel, .product-mo
   border-bottom-color: #ffd700;
 }
 
-/* 6. SUB-CATEGORÍAS ANIDADAS DINÁMICAS */
+/* 6. SUB-CATEGORÃAS ANIDADAS DINÃMICAS */
 .subcats-wrap {
   max-width: 1400px;
   margin: 0 auto 12px auto;
@@ -3463,7 +3463,7 @@ body, html, .menu-item, .cat-card, .brand-card, .bottom-bar, .panel, .product-mo
   box-shadow: 0 4px 10px rgba(255, 255, 255, 0.15) !important;
 }
 
-/* 5. RECIBO DIGITAL INTERACTIVO (TICKET FÍSICO REALISTA) */
+/* 5. RECIBO DIGITAL INTERACTIVO (TICKET FÃSICO REALISTA) */
 .receipt-overlay {
   position: fixed;
   top: 0;
@@ -3659,9 +3659,9 @@ body, html, .menu-item, .cat-card, .brand-card, .bottom-bar, .panel, .product-mo
   background: rgba(30, 41, 59, 0.85);
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   MÓDULO ÉLITE: WISHLIST FAB & HISTORY FAB (BOTONES NAVBAR)
-═══════════════════════════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   MÃ“DULO Ã‰LITE: WISHLIST FAB & HISTORY FAB (BOTONES NAVBAR)
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .wishlist-fab,
 .history-fab {
   position: relative;
@@ -3734,9 +3734,9 @@ body, html, .menu-item, .cat-card, .brand-card, .bottom-bar, .panel, .product-mo
   100% { transform: scale(1); }
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   MÓDULO ÉLITE: BOTÓN WISHLIST EN TARJETA DE PRODUCTO
-═══════════════════════════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   MÃ“DULO Ã‰LITE: BOTÃ“N WISHLIST EN TARJETA DE PRODUCTO
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .menu-item {
   position: relative;
 }
@@ -3786,9 +3786,9 @@ body, html, .menu-item, .cat-card, .brand-card, .bottom-bar, .panel, .product-mo
   border-color: rgba(255, 100, 100, 0.25);
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   MÓDULO ÉLITE: CROSS-SELLING EN CARRITO
-═══════════════════════════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   MÃ“DULO Ã‰LITE: CROSS-SELLING EN CARRITO
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .cross-sell-section {
   margin: 5px 0 15px 0;
   padding: 16px;
@@ -3893,9 +3893,9 @@ body, html, .menu-item, .cat-card, .brand-card, .bottom-bar, .panel, .product-mo
   transform: scale(1.15);
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   MÓDULO ÉLITE: PANEL WISHLIST
-═══════════════════════════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   MÃ“DULO Ã‰LITE: PANEL WISHLIST
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .wishlist-panel,
 .history-panel {
   position: fixed;
@@ -4050,9 +4050,9 @@ body, html, .menu-item, .cat-card, .brand-card, .bottom-bar, .panel, .product-mo
   box-shadow: 0 10px 20px rgba(230, 95, 0, 0.35);
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   MÓDULO ÉLITE: PANEL HISTORIAL DE PEDIDOS
-═══════════════════════════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   MÃ“DULO Ã‰LITE: PANEL HISTORIAL DE PEDIDOS
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .history-order-card {
   background: var(--bg-card);
   border: 1px solid rgba(197, 160, 89, 0.18);
@@ -4134,7 +4134,7 @@ body, html, .menu-item, .cat-card, .brand-card, .bottom-bar, .panel, .product-mo
   box-shadow: 0 6px 14px rgba(230, 95, 0, 0.2);
 }
 
-/* Modo oscuro para todos los nuevos módulos */
+/* Modo oscuro para todos los nuevos mÃ³dulos */
 .dark .cross-sell-section {
   background: linear-gradient(135deg, rgba(230, 95, 0, 0.06) 0%, rgba(197, 160, 89, 0.08) 100%);
 }
@@ -4211,22 +4211,21 @@ body, html, .menu-item, .cat-card, .brand-card, .bottom-bar, .panel, .product-mo
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   MODAL DE CELEBRACIÓN DE COMPRA + COUNTDOWN WHATSAPP
-═══════════════════════════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   MODAL DE CELEBRACIÃ“N MINIMAL
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 .celeb-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(10, 20, 15, 0.82);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(10, 20, 15, 0.80);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   z-index: 3000;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.4s ease, visibility 0.4s ease;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
 }
-
 .celeb-overlay.open {
   opacity: 1;
   visibility: visible;
@@ -4236,228 +4235,93 @@ body, html, .menu-item, .cat-card, .brand-card, .bottom-bar, .panel, .product-mo
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -45%) scale(0.88);
-  width: 92%;
-  max-width: 440px;
-  background: linear-gradient(160deg, #0f2518 0%, #1b3b2b 60%, #0d1f16 100%);
-  border: 1px solid rgba(37, 211, 102, 0.25);
+  transform: translate(-50%, -46%) scale(0.9);
+  width: 88%;
+  max-width: 360px;
+  background: linear-gradient(160deg, #0f2518 0%, #1a3a2a 100%);
+  border: 1px solid rgba(37, 211, 102, 0.2);
   border-radius: 28px;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(37, 211, 102, 0.08);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.55);
   z-index: 3010;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  padding: 32px 28px 28px;
+  transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 32px 24px 28px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
+  gap: 14px;
   text-align: center;
-  overflow: hidden;
 }
-
-.celeb-modal::before {
-  content: '';
-  position: absolute;
-  top: -60px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, rgba(37, 211, 102, 0.12) 0%, transparent 70%);
-  pointer-events: none;
-}
-
 .celeb-modal.open {
   transform: translate(-50%, -50%) scale(1);
   opacity: 1;
   visibility: visible;
 }
 
-/* Ícono de checkmark animado */
-.celeb-success-icon {
-  width: 72px;
-  height: 72px;
-  flex-shrink: 0;
-}
-
+/* Check animado */
+.celeb-success-icon { width: 64px; height: 64px; flex-shrink: 0; }
 .celeb-checkmark {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
+  width: 64px; height: 64px;
   display: block;
   stroke-width: 2.5;
   stroke: #25d366;
   stroke-miterlimit: 10;
-  filter: drop-shadow(0 0 10px rgba(37, 211, 102, 0.5));
+  filter: drop-shadow(0 0 8px rgba(37,211,102,0.5));
 }
-
 .celeb-checkmark-circle {
-  stroke-dasharray: 166;
-  stroke-dashoffset: 166;
-  stroke-width: 2;
-  stroke-miterlimit: 10;
-  stroke: #25d366;
-  fill: none;
-  animation: celebCircle 0.6s cubic-bezier(0.65, 0, 0.45, 1) 0.15s forwards;
+  stroke-dasharray: 166; stroke-dashoffset: 166;
+  stroke-width: 2; fill: none; stroke: #25d366;
+  animation: celebCircle 0.55s cubic-bezier(0.65,0,0.45,1) 0.1s forwards;
 }
-
 .celeb-checkmark-check {
-  stroke-dasharray: 48;
-  stroke-dashoffset: 48;
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  animation: celebCheck 0.35s cubic-bezier(0.65, 0, 0.45, 1) 0.65s forwards;
+  stroke-dasharray: 48; stroke-dashoffset: 48;
+  stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;
+  animation: celebCheck 0.3s cubic-bezier(0.65,0,0.45,1) 0.6s forwards;
 }
+@keyframes celebCircle { 100% { stroke-dashoffset: 0; } }
+@keyframes celebCheck  { 100% { stroke-dashoffset: 0; } }
 
-@keyframes celebCircle {
-  100% { stroke-dashoffset: 0; }
-}
-@keyframes celebCheck {
-  100% { stroke-dashoffset: 0; }
-}
-
-/* Badge y textos */
-.celeb-badge {
-  background: rgba(56, 189, 248, 0.12);
-  border: 1px solid rgba(56, 189, 248, 0.35);
-  border-radius: 30px;
-  padding: 5px 16px;
-  font-size: 0.78rem;
-  font-weight: 800;
-  color: #38bdf8;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  animation: celebFadeUp 0.5s ease 0.3s both;
-}
-
+/* TÃ­tulo y subtÃ­tulo */
 .celeb-title {
   font-family: var(--font-serif);
-  font-size: 1.65rem;
+  font-size: 1.55rem;
   font-weight: 700;
   color: #f0fff4;
-  line-height: 1.2;
-  animation: celebFadeUp 0.5s ease 0.4s both;
   margin: 0;
+  animation: celebFadeUp 0.4s ease 0.25s both;
 }
-
 .celeb-subtitle {
-  font-size: 0.85rem;
-  color: rgba(240, 255, 244, 0.65);
-  line-height: 1.6;
-  animation: celebFadeUp 0.5s ease 0.5s both;
-  margin: 0;
-}
-
-@keyframes celebFadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* Resumen de la orden */
-.celeb-order-summary {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  animation: celebFadeUp 0.5s ease 0.55s both;
-}
-
-.celeb-summary-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.celeb-summary-label {
-  font-size: 0.75rem;
-  color: rgba(240, 255, 244, 0.45);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.celeb-summary-value {
   font-size: 0.82rem;
-  font-weight: 700;
-  color: rgba(240, 255, 244, 0.9);
-  font-family: monospace;
+  color: rgba(240,255,244,0.6);
+  line-height: 1.55;
+  margin: 0;
+  animation: celebFadeUp 0.4s ease 0.35s both;
+}
+@keyframes celebFadeUp {
+  from { opacity:0; transform:translateY(10px); }
+  to   { opacity:1; transform:translateY(0); }
 }
 
-.celeb-total {
-  font-size: 1.05rem !important;
-  color: #25d366 !important;
-  font-family: var(--font-sans) !important;
-}
-
-/* Zona de countdown + texto */
-.celeb-redirect-wrap {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  width: 100%;
-  background: rgba(37, 211, 102, 0.06);
-  border: 1px solid rgba(37, 211, 102, 0.15);
-  border-radius: 18px;
-  padding: 14px 16px;
-  animation: celebFadeUp 0.5s ease 0.65s both;
-}
-
-.celeb-countdown-ring-wrap {
-  position: relative;
-  width: 56px;
-  height: 56px;
-  flex-shrink: 0;
-}
-
-.celeb-countdown-svg {
-  width: 56px;
-  height: 56px;
-}
-
-.celeb-countdown-num {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 1.3rem;
+/* Total grande */
+.celeb-total-big {
+  font-size: 2.2rem;
   font-weight: 900;
   color: #25d366;
-  line-height: 1;
+  letter-spacing: -0.02em;
   font-family: var(--font-sans);
+  animation: celebFadeUp 0.4s ease 0.4s both;
+  text-shadow: 0 0 20px rgba(37,211,102,0.35);
 }
 
-.celeb-redirect-text {
-  flex: 1;
-  text-align: left;
-}
-
-.celeb-redirect-main {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: rgba(240, 255, 244, 0.9);
-  margin: 0 0 3px;
-}
-
-.celeb-redirect-sub {
-  font-size: 0.75rem;
-  color: rgba(240, 255, 244, 0.5);
-  margin: 0;
-}
-
-.celeb-redirect-sub strong {
-  color: #25d366;
-}
-
-/* Botón skip / ir ahora */
+/* BotÃ³n con ring integrado */
 .celeb-skip-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   width: 100%;
-  padding: 15px 20px;
+  padding: 13px 20px;
   border-radius: 30px;
   background: #25d366;
   color: #0a1a10;
@@ -4466,60 +4330,62 @@ body, html, .menu-item, .cat-card, .brand-card, .bottom-bar, .panel, .product-mo
   font-size: 0.92rem;
   font-weight: 800;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.35);
-  animation: celebFadeUp 0.5s ease 0.75s both;
-  letter-spacing: 0.02em;
+  transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+  box-shadow: 0 8px 22px rgba(37,211,102,0.3);
+  animation: celebFadeUp 0.4s ease 0.5s both;
+  letter-spacing: 0.01em;
+}
+.celeb-skip-btn:hover  { background:#20c85e; transform:translateY(-2px); box-shadow:0 12px 28px rgba(37,211,102,0.4); }
+.celeb-skip-btn:active { transform:translateY(0); }
+
+/* Ring dentro del botÃ³n */
+.celeb-countdown-ring-wrap {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+.celeb-countdown-svg { width: 36px; height: 36px; }
+.celeb-countdown-num {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  font-size: 0.82rem;
+  font-weight: 900;
+  color: #0a1a10;
+  line-height: 1;
+  font-family: var(--font-sans);
 }
 
-.celeb-skip-btn:hover {
-  background: #20c85e;
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(37, 211, 102, 0.45);
+/* Estado "listo" */
+.celeb-btn-ready {
+  background: #20c85e !important;
+  animation: celebBtnPulse 1.1s ease-in-out infinite !important;
+}
+@keyframes celebBtnPulse {
+  0%   { box-shadow: 0 0 0 0   rgba(37,211,102,0.55); transform:scale(1); }
+  50%  { box-shadow: 0 0 0 12px rgba(37,211,102,0);   transform:scale(1.025); }
+  100% { box-shadow: 0 0 0 0   rgba(37,211,102,0);    transform:scale(1); }
 }
 
-.celeb-skip-btn:active {
-  transform: translateY(0);
-}
-
-/* Partículas de confetti emoji */
+/* PartÃ­culas de confetti */
 .celeb-emoji-particle {
   position: fixed;
   top: -40px;
   pointer-events: none;
   z-index: 4000;
-  animation: celebRain 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation: celebRain 2s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
   user-select: none;
 }
-
 @keyframes celebRain {
-  0% {
-    transform: translateY(0) rotate(0deg) scale(0.5);
-    opacity: 1;
-  }
-  60% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(110vh) rotate(360deg) scale(1.2);
-    opacity: 0;
-  }
+  0%   { transform: translateY(0) rotate(0deg) scale(0.5); opacity:1; }
+  60%  { opacity:1; }
+  100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity:0; }
 }
 
-/* Responsive móvil */
+/* Responsive */
 @media (max-width: 520px) {
-  .celeb-modal {
-    padding: 24px 20px 22px;
-    gap: 14px;
-    max-height: 92vh;
-    overflow-y: auto;
-  }
-
-  .celeb-title {
-    font-size: 1.4rem;
-  }
-
-  .celeb-subtitle {
-    font-size: 0.8rem;
-  }
+  .celeb-modal { padding: 28px 20px 24px; gap: 12px; }
+  .celeb-title { font-size: 1.35rem; }
+  .celeb-total-big { font-size: 1.9rem; }
 }

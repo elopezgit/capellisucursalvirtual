@@ -1045,46 +1045,42 @@ function sendWhatsApp() {
   });
 }
 
-// ─── MODAL DE CELEBRACIÓN DE COMPRA + COUNTDOWN A WHATSAPP ─────────
+// ─── MODAL DE CELEBRACIÓN + AUTO REDIRECT A WHATSAPP ─────────────────
 let _celebrationCountdownTimer = null;
+let _celebWaUrl   = '';
 
-function openCelebrationModal({ orderId, clientName, tel, deliveryMethod, total, waUrl }) {
+function openCelebrationModal({ waUrl }) {
   playSound('order');
-  
+
+  _celebWaUrl = waUrl;
+
   const overlay = document.getElementById('celebrationOverlay');
   const modal   = document.getElementById('celebrationModal');
   if (!overlay || !modal) return;
-
-  // Rellenar datos
-  document.getElementById('celebOrderId').textContent    = orderId;
-  document.getElementById('celebTotal').textContent      = formatPrice(total);
-  document.getElementById('celebClient').textContent     = clientName;
-  document.getElementById('celebDelivery').textContent   = deliveryMethod === 'retiro' ? '🏢 Retiro en Sucursal' : '🚚 Envío a Domicilio';
 
   // Mostrar modal
   overlay.classList.add('open');
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
 
-  // Lanzar partículas de confetti emoji
+  // Confetti
   spawnCelebrationEmojis();
 
-  // Countdown de 3 segundos con animación de anillo SVG
+  // Countdown VISUAL y AUTO REDIRECT a los 3 segundos
   let seconds = 3;
   updateCelebCountdown(seconds);
-
   clearTimeout(_celebrationCountdownTimer);
 
   function tick() {
     seconds--;
     updateCelebCountdown(seconds);
     if (seconds <= 0) {
-      // Abrir WhatsApp
-      window.open(waUrl, '_blank');
-      showToast('📲 ¡Solicitud enviada! Conectándote con un asesor...');
-      // Cerrar modal de celebración y abrir recibo
+      // Countdown terminó → Abrir WhatsApp automáticamente
+      if (_celebWaUrl) {
+        window.open(_celebWaUrl, '_blank');
+        showToast('📲 ¡Conectándote con un asesor por WhatsApp!');
+      }
       closeCelebrationModal();
-      openReceiptModal(orderId, clientName, tel, deliveryMethod, total);
     } else {
       _celebrationCountdownTimer = setTimeout(tick, 1000);
     }
@@ -1095,14 +1091,11 @@ function openCelebrationModal({ orderId, clientName, tel, deliveryMethod, total,
 
 function updateCelebCountdown(n) {
   const numEl  = document.getElementById('celebCountdownNum');
-  const numEl2 = document.getElementById('celebCountdownNum2');
   const ringEl = document.getElementById('celebCountdownRing');
   if (numEl)  numEl.textContent  = n;
-  if (numEl2) numEl2.textContent = n;
-  // stroke-dashoffset: 0 = anillo lleno, 283 = vacío (circunferencia r=45)
   if (ringEl) {
     const circumference = 283;
-    const pct = n / 3; // 3→1, 2→0.67, 1→0.33, 0→0
+    const pct = n / 3; // 3→1  2→0.67  1→0.33  0→0
     ringEl.style.strokeDashoffset = String(circumference * (1 - pct));
   }
 }
@@ -1114,23 +1107,6 @@ function closeCelebrationModal() {
   if (overlay) overlay.classList.remove('open');
   if (modal)   modal.classList.remove('open');
   document.body.style.overflow = '';
-}
-
-function skipCelebrationAndOpenWA() {
-  clearTimeout(_celebrationCountdownTimer);
-  const waBtn = document.getElementById('celebSkipBtn');
-  if (waBtn) {
-    const waUrl = waBtn.dataset.url;
-    if (waUrl) window.open(waUrl, '_blank');
-  }
-  const orderId       = document.getElementById('celebOrderId')?.textContent || '';
-  const clientName    = document.getElementById('celebClient')?.textContent || '';
-  const tel           = '';
-  const deliveryMethod = document.getElementById('celebDelivery')?.textContent?.includes('Retiro') ? 'retiro' : 'envio';
-  const totalText     = document.getElementById('celebTotal')?.textContent || '$0';
-  const total         = parseInt(totalText.replace(/\D/g, '')) || 0;
-  closeCelebrationModal();
-  openReceiptModal(orderId, clientName, tel, deliveryMethod, total);
 }
 
 function spawnCelebrationEmojis() {

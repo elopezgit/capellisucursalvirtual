@@ -501,12 +501,12 @@
   </div>
 
   <!-- ═══════════════════════════════════════════════════════
-       MODAL DE CELEBRACIÓN DE COMPRA + COUNTDOWN WHATSAPP
+       MODAL DE CELEBRACIÓN — DISEÑO ULTRA MINIMAL (AUTO REDIRECT)
   ══════════════════════════════════════════════════════════ -->
   <div class="celeb-overlay" id="celebrationOverlay"></div>
   <div class="celeb-modal" id="celebrationModal">
 
-    <!-- Ícono de éxito animado -->
+    <!-- Check animado -->
     <div class="celeb-success-icon">
       <svg viewBox="0 0 52 52" class="celeb-checkmark">
         <circle class="celeb-checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
@@ -514,57 +514,22 @@
       </svg>
     </div>
 
-    <div class="celeb-badge">📋 Solicitud Enviada</div>
-    <h2 class="celeb-title">¡Gracias por tu consulta!</h2>
-    <p class="celeb-subtitle">Tu solicitud fue registrada. Un asesor de Club Capelli la revisará y confirmará disponibilidad y precio final por WhatsApp.</p>
+    <h2 class="celeb-title" style="margin-top: 10px;">¡Gracias por tu consulta!</h2>
+    <p class="celeb-subtitle" style="margin-bottom: 24px;">Te redireccionamos a WhatsApp en breve...</p>
 
-    <!-- Datos del pedido en resumen -->
-    <div class="celeb-order-summary">
-      <div class="celeb-summary-row">
-        <span class="celeb-summary-label">Solicitud</span>
-        <span class="celeb-summary-value" id="celebOrderId">#CC-XXXX</span>
-      </div>
-      <div class="celeb-summary-row">
-        <span class="celeb-summary-label">Total</span>
-        <span class="celeb-summary-value celeb-total" id="celebTotal">$0</span>
-      </div>
-      <div class="celeb-summary-row">
-        <span class="celeb-summary-label">Cliente</span>
-        <span class="celeb-summary-value" id="celebClient">--</span>
-      </div>
-      <div class="celeb-summary-row">
-        <span class="celeb-summary-label">Modalidad</span>
-        <span class="celeb-summary-value" id="celebDelivery">--</span>
-      </div>
+    <!-- Countdown ring centrado -->
+    <div class="celeb-countdown-ring-wrap" style="margin: 0 auto; width: 64px; height: 64px;">
+      <svg class="celeb-countdown-svg" viewBox="0 0 100 100" style="width: 64px; height: 64px;">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(37,211,102,0.2)" stroke-width="7"/>
+        <circle id="celebCountdownRing" cx="50" cy="50" r="45" fill="none"
+          stroke="#25d366" stroke-width="7"
+          stroke-dasharray="283" stroke-dashoffset="0"
+          stroke-linecap="round"
+          transform="rotate(-90 50 50)"
+          style="transition: stroke-dashoffset 0.85s cubic-bezier(0.4,0,0.2,1)"/>
+      </svg>
+      <span class="celeb-countdown-num" id="celebCountdownNum" style="font-size: 1.4rem;">3</span>
     </div>
-
-    <!-- Countdown + texto de redirección -->
-    <div class="celeb-redirect-wrap">
-      <!-- Anillo SVG de countdown -->
-      <div class="celeb-countdown-ring-wrap">
-        <svg class="celeb-countdown-svg" viewBox="0 0 100 100">
-          <!-- Track de fondo -->
-          <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="6"/>
-          <!-- Anillo animado -->
-          <circle id="celebCountdownRing" cx="50" cy="50" r="45" fill="none"
-            stroke="#25d366" stroke-width="6"
-            stroke-dasharray="283" stroke-dashoffset="0"
-            stroke-linecap="round"
-            transform="rotate(-90 50 50)"
-            style="transition: stroke-dashoffset 0.85s cubic-bezier(0.4,0,0.2,1)"/>
-        </svg>
-        <span class="celeb-countdown-num" id="celebCountdownNum">3</span>
-      </div>
-      <div class="celeb-redirect-text">
-        <p class="celeb-redirect-main">📲 Te estamos redirigiendo a WhatsApp...</p>
-        <p class="celeb-redirect-sub">Un asesor confirmará tu solicitud en <strong id="celebCountdownNum2">3</strong> seg.</p>
-      </div>
-    </div>
-
-    <!-- Botón de ir ahora (skip) -->
-    <button class="celeb-skip-btn" id="celebSkipBtn" onclick="skipCelebrationAndOpenWA()">
-      <span>💬 Ir a WhatsApp ahora</span>
-    </button>
 
   </div>
 
