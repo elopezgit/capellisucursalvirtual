@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Club Capelli - Panel de Control Ejecutivo</title>
+  
+  <!-- FUENTES DE LUXE: Outfit para cuerpo, Playfair Display para títulos -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js para visualización comercial -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <style>
+    :root {
+      --primary: #1b3b2b;       /* Verde profundo Club Capelli */
+      --primary-light: #2d5a43;
+      --accent: #c5a059;        /* Dorado/Bronce de luxe */
+      --accent-light: #dfc28d;
+      --bg-cream: #faf9f6;      /* Crema suave premium */
+      --bg-card: #ffffff;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --border-light: 1px solid rgba(27, 59, 43, 0.08);
+      --border-gold: 1px solid rgba(197, 160, 89, 0.35);
+      --shadow-premium: 0 10px 30px rgba(27, 59, 43, 0.04);
+      --shadow-modal: 0 20px 50px rgba(18, 18, 18, 0.12);
+      --font-sans: 'Outfit', sans-serif;
+      --font-serif: 'Playfair Display', serif;
+      --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-cream);
+      color: var(--text-dark);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ─── PANTALLA DE INICIO DE SESIÓN DE ALTA GAMA ───────────────────── */
+    #loginOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(250, 249, 246, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #loginOverlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-50px);
+    }
+
+    .login-card {
+      background: var(--bg-card);
+      border: var(--border-gold);
+      padding: 40px;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: var(--shadow-modal);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      animation: loginFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes loginFadeIn {
+      from { transform: scale(0.92) translateY(20px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .login-logo {
+      height: 60px;
+      object-fit: contain;
+      margin: 0 auto 10px auto;
+    }
+
+    .login-title {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .login-sub {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-top: -10px;
+    }
+
+    .login-input-wrap {
+      position: relative;
+    }
+
+    .login-input {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 12px;
+      border: var(--border-light);
+      background: var(--bg-cream);
+      font-size: 1rem;
+      outline: none;
+      text-align: center;
+      letter-spacing: 0.1em;
+      transition: var(--transition-smooth);
+    }
+
+    .login-input:focus {
+      border-color: var(--accent);
+      background: #fff;
+      box-shadow: 0 0 15px rgba(197, 160, 89, 0.15);
+    }
+
+    .login-btn {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: #fff;
+      border: 1px solid var(--accent);
+      padding: 14px;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: var(--transition-smooth);
+      box-shadow: 0 5px 15px rgba(27, 59, 43, 0.15);
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(27, 59, 43, 0.25);
+    }
+
+    .login-error {
+      color: #d90429;
+      font-size: 0.82rem;
+      display: none;
+      font-weight: 500;
+    }
+
+    /* ─── DISEÑO DEL DASHBOARD EJECUTIVO ────────────────────────────── */
+    .dashboard-wrap {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 40px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    /* Navbar superior */
+    .dash-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: var(--border-light);
+      padding-bottom: 20px;
+    }
+
+    .brand-block {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .dash-logo {
+      height: 50px;
+      object-fit: contain;
+    }
+
+    .dash-title-block h1 {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .dash-title-block p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-premium {
+      background: #fff;
+      border: var(--border-light);
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition-smooth);
+      outline: none;
+    }
+
+    .btn-premium:hover {
+      border-color: var(--accent);
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary-action {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: #fff;
+      border: 1px solid var(--accent);
+    }
+
+    .btn-primary-action:hover {
+      background: #fff;
+      color: var(--primary);
+    }
+
+    /* Fila de Tarjetas KPI */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: var(--border-light);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: var(--shadow-premium);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+    }
+
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .kpi-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .kpi-value {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.1;
+    }
+
+    .kpi-footer {
+      font-size: 0.78rem;
+      color: var(--primary-light);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Gráficos */
+    .charts-row {
+      display: grid;
+      grid-template-columns: 1.8fr 1.2fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 992px) {
+      .charts-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chart-card {
+      background: var(--bg-card);
+      border: var(--border-light);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: var(--shadow-premium);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .chart-title {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 280px;
+    }
+
+    /* Tabla de Control de Leads CRM */
+    .crm-card {
+      background: var(--bg-card);
+      border: var(--border-light);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: var(--shadow-premium);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .crm-filter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .search-input-wrap {
+      flex-grow: 1;
+      max-width: 400px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: var(--border-light);
+      font-size: 0.88rem;
+      outline: none;
+      background-color: var(--bg-cream);
+      transition: var(--transition-smooth);
+    }
+
+    .search-input:focus {
+      background: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 0 10px rgba(197, 160, 89, 0.1);
+    }
+
+    .filters-wrap {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-select {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: var(--border-light);
+      font-size: 0.85rem;
+      outline: none;
+      background: #fff;
+      color: var(--text-dark);
+      cursor: pointer;
+      font-weight: 500;
+      transition: var(--transition-smooth);
+    }
+
+    .filter-select:hover {
+      border-color: var(--accent);
+    }
+
+    /* Estilos de Tabla */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .crm-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    .crm-table th {
+      padding: 14px 16px;
+      border-bottom: 2px solid rgba(27, 59, 43, 0.08);
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+    }
+
+    .crm-table td {
+      padding: 16px;
+      border-bottom: var(--border-light);
+      color: var(--text-dark);
+    }
+
+    .crm-table tbody tr {
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .crm-table tbody tr:hover {
+      background-color: rgba(197, 160, 89, 0.02);
+    }
+
+    .state-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .state-badge.pendiente {
+      background-color: rgba(243, 156, 18, 0.1);
+      color: #e67e22;
+      border: 1px solid rgba(243, 156, 18, 0.2);
+    }
+
+    .state-badge.enviado {
+      background-color: rgba(46, 204, 113, 0.1);
+      color: #27ae60;
+      border: 1px solid rgba(46, 204, 113, 0.2);
+    }
+
+    .state-badge.cancelado {
+      background-color: rgba(231, 76, 60, 0.1);
+      color: #c0392b;
+      border: 1px solid rgba(231, 76, 60, 0.2);
+    }
+
+    .client-badge {
+      background-color: rgba(197, 160, 89, 0.08);
+      color: var(--accent);
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border: 1px solid rgba(197, 160, 89, 0.15);
+    }
+
+    /* Paginación */
+    .pagination-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .pagination-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .page-btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: var(--border-light);
+      background: #fff;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-dark);
+      transition: var(--transition-smooth);
+    }
+
+    .page-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      color: var(--primary);
+    }
+
+    .page-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* ─── MODAL DE DETALLE DEL LEAD (CRM DRAWER) ───────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(18, 18, 18, 0.35);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition-smooth);
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .detail-modal {
+      background: var(--bg-card);
+      border: var(--border-gold);
+      border-radius: 24px;
+      width: 90%;
+      max-width: 680px;
+      max-height: 90vh;
+      box-shadow: var(--shadow-modal);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transform: scale(0.95) translateY(20px);
+      transition: var(--transition-smooth);
+    }
+
+    .modal-overlay.open .detail-modal {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      padding: 24px;
+      background: rgba(27, 59, 43, 0.02);
+      border-bottom: var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: var(--border-light);
+      transition: var(--transition-smooth);
+    }
+
+    .modal-close:hover {
+      background-color: rgba(27, 59, 43, 0.05);
+      color: var(--primary);
+    }
+
+    .modal-scroll-area {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .detail-section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px 20px;
+    }
+
+    @media (max-width: 480px) {
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .detail-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .detail-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .detail-val {
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--text-dark);
+    }
+
+    .whatsapp-preview-box {
+      background: #efeae2;
+      border-radius: 12px;
+      padding: 16px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      white-space: pre-wrap;
+      max-height: 180px;
+      overflow-y: auto;
+      border: 1px solid #d4cdc3;
+      color: #303030;
+      line-height: 1.4;
+    }
+
+    .modal-footer {
+      padding: 20px 24px;
+      background: rgba(27, 59, 43, 0.02);
+      border-top: var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .crm-state-modifier {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .crm-state-select {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: var(--border-gold);
+      font-size: 0.85rem;
+      outline: none;
+      background: #fff;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .crm-state-btn {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: #fff;
+      border: 1px solid var(--accent);
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition-smooth);
+    }
+
+    .crm-state-btn:hover {
+      box-shadow: 0 5px 12px rgba(27, 59, 43, 0.15);
+      transform: translateY(-1px);
+    }
+
+    /* Spinner en modal */
+    .crm-state-btn.loading {
+      position: relative;
+      color: transparent !important;
+      pointer-events: none;
+    }
+
+    .crm-state-btn.loading::after {
+      content: "";
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      top: 50%;
+      left: 50%;
+      margin-top: -7px;
+      margin-left: -7px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: crm-spin 0.6s linear infinite;
+    }
+
+    @keyframes crm-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Notificación flotante de cargando */
+    #loadingScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(250, 249, 246, 0.7);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      z-index: 11000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition-smooth);
+    }
+
+    #loadingScreen.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .loading-spinner-circle {
+      width: 45px;
+      height: 45px;
+      border: 4px solid rgba(27, 59, 43, 0.1);
+      border-radius: 50%;
+      border-top-color: var(--accent);
+      animation: crm-spin 1s linear infinite;
+    }
+
+    .toast-message {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background-color: #121212;
+      color: #fff;
+      border: 1px solid var(--accent);
+      border-radius: 30px;
+      padding: 10px 24px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 12000;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .toast-message.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      visibility: visible;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PANTALLA DE INICIO DE SESIÓN EXCLUSIVA -->
+  <div id="loginOverlay">
+    <div class="login-card">
+      <img src="img/logo/capellilogo.png" alt="Club Capelli" class="login-logo">
+      <h2 class="login-title">Panel Ejecutivo</h2>
+      <p class="login-sub">Administración y CRM en Tiempo Real</p>
+      
+      <div class="login-input-wrap">
+        <input type="password" id="loginPin" class="login-input" placeholder="••••••••" autofocus>
+      </div>
+      
+      <p class="login-error" id="loginError">Contraseña incorrecta. Inténtelo de nuevo.</p>
+      
+      <button class="login-btn" onclick="validateLogin()">Iniciar Sesión</button>
+    </div>
+  </div>
+
+  <!-- LOADER GLOBAL DE DATOS -->
+  <div id="loadingScreen">
+    <div class="loading-spinner-circle"></div>
+    <p style="font-weight: 600; color: var(--primary);">Conectando con Google Sheets...</p>
+  </div>
+
+  <!-- TOAST DE CONTROL -->
+  <div id="toast" class="toast-message"></div>
+
+  <!-- CONTENEDOR PRINCIPAL DEL DASHBOARD -->
+  <div class="dashboard-wrap">
+    
+    <!-- HEADER -->
+    <header class="dash-header">
+      <div class="brand-block">
+        <img src="img/logo/capellilogo.png" alt="Club Capelli" class="dash-logo">
+        <div class="dash-title-block">
+          <h1>Club Capelli</h1>
+          <p>Métricas y CRM · Canal Web</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-premium" onclick="window.open('index.html', '_blank')">🛒 Ir a Tienda</button>
+        <button class="btn-premium btn-primary-action" onclick="fetchData()">🔄 Actualizar Datos</button>
+      </div>
+    </header>
+
+    <!-- FILA DE TARJETAS KPI -->
+    <section class="kpi-row">
+      <!-- Ingresos -->
+      <div class="kpi-card">
+        <span class="kpi-label">Ingresos Totales</span>
+        <span class="kpi-value" id="kpiRevenue">$0</span>
+        <div class="kpi-footer">💼 Ventas Estimadas Acumuladas</div>
+      </div>
+      <!-- Pedidos -->
+      <div class="kpi-card">
+        <span class="kpi-label">Total Solicitudes</span>
+        <span class="kpi-value" id="kpiOrders">0</span>
+        <div class="kpi-footer">🛍️ Leads Recibidos</div>
+      </div>
+      <!-- Ticket Promedio -->
+      <div class="kpi-card">
+        <span class="kpi-label">Ticket Promedio</span>
+        <span class="kpi-value" id="kpiAvgValue">$0</span>
+        <div class="kpi-footer">📊 Ingreso por Solicitud</div>
+      </div>
+      <!-- Tasa Profesionales -->
+      <div class="kpi-card">
+        <span class="kpi-label">Tasa Profesionales</span>
+        <span class="kpi-value" id="kpiProfRatio">0%</span>
+        <div class="kpi-footer">👑 Proporción de Salones / Coloristas</div>
+      </div>
+    </section>
+
+    <!-- GRÁFICOS ANALÍTICOS -->
+    <section class="charts-row">
+      <!-- Tendencia de Ventas -->
+      <div class="chart-card">
+        <h2 class="chart-title">📈 Tendencia de Ventas (Pesos)</h2>
+        <div class="chart-container">
+          <canvas id="salesChart"></canvas>
+        </div>
+      </div>
+      <!-- Distribución de Categorías -->
+      <div class="chart-card">
+        <h2 class="chart-title">🍩 Categorías Más Solicitadas</h2>
+        <div class="chart-container">
+          <canvas id="categoriesChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- CRM CONTROL CENTER (TABLA DE LEADS) -->
+    <section class="crm-card">
+      <h2 class="chart-title">📋 Centro de Solicitudes CRM</h2>
+      
+      <!-- Filtros -->
+      <div class="crm-filter-bar">
+        <div class="search-input-wrap">
+          <input type="text" id="crmSearch" class="search-input" placeholder="🔍 Buscar por Nombre, Teléfono o ID..." oninput="filterData()">
+        </div>
+        
+        <div class="filters-wrap">
+          <select id="filterState" class="filter-select" onchange="filterData()">
+            <option value="todos">Todos los Estados</option>
+            <option value="Pendiente de envío">Pendientes</option>
+            <option value="Enviado">Enviados</option>
+            <option value="Cancelado">Cancelados</option>
+          </select>
+          <select id="filterTier" class="filter-select" onchange="filterData()">
+            <option value="todos">Todos los Clientes</option>
+            <option value="Profesional">Profesionales</option>
+            <option value="Público">Público General</option>
+          </select>
+          <select id="filterDelivery" class="filter-select" onchange="filterData()">
+            <option value="todos">Todos los Envíos</option>
+            <option value="Retiro">Retiro en Sucursal</option>
+            <option value="Envío">Envío a Domicilio</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Tabla de Datos -->
+      <div class="table-container">
+        <table class="crm-table">
+          <thead>
+            <tr>
+              <th>Fecha / Hora</th>
+              <th>Número</th>
+              <th>Cliente</th>
+              <th>Categoría</th>
+              <th>Método Entrega</th>
+              <th>Total</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="crmTableBody">
+            <!-- Inyectado dinámicamente -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginación -->
+      <div class="pagination-bar">
+        <span id="crmPaginationText">Mostrando 0 solicitudes</span>
+        <div class="pagination-btns">
+          <button class="page-btn" id="btnPrevPage" onclick="prevPage()" disabled>Anterior</button>
+          <button class="page-btn" id="btnNextPage" onclick="nextPage()" disabled>Siguiente</button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- MODAL DE DETALLE DEL LEAD (CRM DRAWER) -->
+  <div class="modal-overlay" id="detailModalOverlay" onclick="closeModal()">
+    <div class="detail-modal" onclick="event.stopPropagation()">
+      <header class="modal-header">
+        <h2 class="modal-title" id="modalOrderId">Solicitud: #CC-XXXX</h2>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </header>
+      
+      <div class="modal-scroll-area">
+        
+        <!-- Bloque 1: Cliente -->
+        <div>
+          <h3 class="detail-section-title">👤 Información de Contacto</h3>
+          <div class="detail-grid">
+            <div class="detail-field">
+              <span class="detail-label">Nombre del Cliente</span>
+              <span class="detail-val" id="detName">-</span>
+            </div>
+            <div class="detail-field">
+              <span class="detail-label">Teléfono Celular</span>
+              <span class="detail-val" id="detPhone">-</span>
+            </div>
+            <div class="detail-field">
+              <span class="detail-label">Correo Electrónico</span>
+              <span class="detail-val" id="detEmail">-</span>
+            </div>
+            <div class="detail-field">
+              <span class="detail-label">Categoría Cliente</span>
+              <span class="detail-val" id="detTier">-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloque 2: Entrega y Pago -->
+        <div>
+          <h3 class="detail-section-title">🚚 Entrega y Facturación</h3>
+          <div class="detail-grid">
+            <div class="detail-field">
+              <span class="detail-label">Método de Entrega</span>
+              <span class="detail-val" id="detDelivery">-</span>
+            </div>
+            <div class="detail-field">
+              <span class="detail-label">Sucursal / Dirección</span>
+              <span class="detail-val" id="detAddress">-</span>
+            </div>
+            <div class="detail-field">
+              <span class="detail-label">Medio de Pago</span>
+              <span class="detail-val" id="detPayment">-</span>
+            </div>
+            <div class="detail-field">
+              <span class="detail-label">Total Acumulado</span>
+              <span class="detail-val" id="detTotal" style="font-weight: 700; color: var(--primary);">-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloque 3: Auditoría y Específicos -->
+        <div>
+          <h3 class="detail-section-title">🔒 Auditoría y Sesión</h3>
+          <div class="detail-grid">
+            <div class="detail-field">
+              <span class="detail-label">IP del Cliente</span>
+              <span class="detail-val" id="detIP">-</span>
+            </div>
+            <div class="detail-field">
+              <span class="detail-label">Identificador de Sesión</span>
+              <span class="detail-val" id="detSession">-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloque 4: Notas -->
+        <div>
+          <h3 class="detail-section-title">📝 Notas del Pedido</h3>
+          <p class="detail-val" id="detNotes" style="font-style: italic;">Sin observaciones...</p>
+        </div>
+
+        <!-- Bloque 5: Mensaje WhatsApp -->
+        <div>
+          <h3 class="detail-section-title">💬 Mensaje de WhatsApp Generado</h3>
+          <div class="whatsapp-preview-box" id="detWAPreview">-</div>
+        </div>
+
+      </div>
+
+      <!-- FOOTER DEL MODAL ( CRM CONTROLES ) -->
+      <footer class="modal-footer">
+        <div class="crm-state-modifier">
+          <label class="detail-label" style="margin-right: 5px;">Estado CRM:</label>
+          <select id="modalStateSelect" class="crm-state-select">
+            <option value="Pendiente de envío">Pendiente de envío</option>
+            <option value="Enviado">Enviado</option>
+            <option value="Cancelado">Cancelado</option>
+          </select>
+        </div>
+        <button class="crm-state-btn" onclick="updateState()">💾 Guardar Estado</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- SCRIPT DE SERVICIOS -->
+  <script src="googleSheetsService.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

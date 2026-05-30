@@ -924,7 +924,7 @@ function renderCartPanel() {
 }
 
 // ─── ENVÍO DE PEDIDO A WHATSAPP (+5493814647103) ───────────────────
-function sendWhatsApp() {
+async function sendWhatsApp() {
   const nombre = document.getElementById('fNombre').value.trim();
   const apellido = document.getElementById('fApellido').value.trim();
   const email = document.getElementById('fEmail').value.trim();
@@ -1014,6 +1014,80 @@ function sendWhatsApp() {
   }
   
   msg += `\n📲 _Pedido generado digitalmente desde la Sucursal Virtual Club Capelli_`;
+
+  // Activar spinner premium de carga en el botón
+  const waBtn = document.querySelector('.wa-btn');
+  if (waBtn) waBtn.classList.add('loading');
+
+  // Preparar payload de datos para el repositorio central en Google Sheets
+  const itemsList = Object.entries(cart).map(([idStr, qty]) => {
+    const item = MENU.find(i => i.id === parseInt(idStr));
+    if (!item) return null;
+    const activePrice = isProfessional ? item.price_prof : item.price;
+    return {
+      qty,
+      code: item.code,
+      name: item.name,
+      cat: item.cat || 'General',
+      totalPrice: activePrice * qty
+    };
+  }).filter(Boolean);
+
+  const productosResumen = itemsList.map(i => `${i.qty}x ${i.name} (${i.code})`).join(', ');
+  const cantidadTotal = itemsList.reduce((sum, i) => sum + i.qty, 0);
+  const categoriasResumen = [...new Set(itemsList.map(i => i.cat))].join(', ');
+
+  const orderData = {
+    timestamp: new Date().toISOString(),
+    fecha: new Date().toLocaleDateString('es-AR'),
+    hora: new Date().toLocaleTimeString('es-AR'),
+    orderId: orderId,
+    nombre: `${nombre} ${apellido}`,
+    telefono: tel,
+    email: email,
+    deliveryMethod: deliveryMethod === 'retiro' ? 'Retiro en Sucursal' : 'Envío a Domicilio',
+    sucursal: deliveryMethod === 'retiro' ? (document.getElementById('fSucursal')?.value || 'Sucursal Principal') : '',
+    direccion: deliveryMethod === 'envio' ? (document.getElementById('fDireccion')?.value.trim() || '') : '',
+    localidad: deliveryMethod === 'envio' ? (document.getElementById('fLocalidad')?.value.trim() || '') : '',
+    categoriaCliente: isProfessional ? 'Profesional (Salón)' : 'Público General',
+    productosResumen: productosResumen,
+    cantidadTotal: cantidadTotal,
+    categoriasResumen: categoriasResumen,
+    total: total,
+    observaciones: nota,
+    medioPago: paymentMethod === 'efectivo' ? 'Efectivo' : 'Transferencia Bancaria',
+    mensajeWhatsapp: msg,
+    estado: 'Pendiente de envío',
+    canal: 'Web',
+    sessionId: GoogleSheetsService.getSessionId(),
+    ip: 'Obteniendo...',
+    usuarioResponsable: 'Cliente Autónomo'
+  };
+
+  try {
+    // Obtener IP pública en segundo plano
+    orderData.ip = await GoogleSheetsService.getIPAddress();
+    
+    // Guardar registro comercial en Google Sheets a través de Apps Script
+    const result = await GoogleSheetsService.registerOrder(orderData);
+    
+    if (result && result.status === 'success') {
+      console.info("GoogleSheetsService: Solicitud registrada exitosamente en Google Sheets. ID:", orderId);
+      showToast('✅ ¡Solicitud registrada con éxito!');
+    } else if (result && result.status === 'duplicate') {
+      console.warn("GoogleSheetsService: Se detectó una solicitud duplicada. Ignorando escritura.");
+    } else if (result && result.status === 'unconfigured') {
+      console.info("GoogleSheetsService: La URL de Apps Script no está configurada aún. Saltando guardado.");
+    } else {
+      console.warn("GoogleSheetsService: Respuesta inesperada al registrar orden:", result);
+    }
+  } catch (error) {
+    console.error("GoogleSheetsService: Error crítico al escribir en Google Sheets. Continuando flujo para no perder venta:", error);
+    showToast('⚠️ No se pudo guardar en planilla, enviando por WhatsApp...');
+  } finally {
+    // Apagar spinner de carga en el botón
+    if (waBtn) waBtn.classList.remove('loading');
+  }
   
   saveClientData();
   
@@ -1077,7 +1151,12 @@ function openCelebrationModal({ waUrl }) {
     if (seconds <= 0) {
       // Countdown terminó → Abrir WhatsApp automáticamente
       if (_celebWaUrl) {
-        window.open(_celebWaUrl, '_blank');
+        // Intentar abrir en pestaña nueva. Si el bloqueador de popups del navegador la detiene debido a la llamada asíncrona,
+        // redirigimos en la pestaña actual. Esto nunca se bloquea y abre WhatsApp Web/App sin fallos.
+        const newWin = window.open(_celebWaUrl, '_blank');
+        if (!newWin || newWin.closed || typeof newWin.closed === 'undefined') {
+          window.location.href = _celebWaUrl;
+        }
         showToast('📲 ¡Conectándote con un asesor por WhatsApp!');
       }
       closeCelebrationModal();

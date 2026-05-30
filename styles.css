@@ -1,4 +1,4 @@
-﻿/* â”€â”€â”€ HOSTERÃA ATAHUALPA YUPANQUI - PREMIUM ROOM SERVICE CSS â”€â”€â”€ */
+/* â”€â”€â”€ HOSTERÃA ATAHUALPA YUPANQUI - PREMIUM ROOM SERVICE CSS â”€â”€â”€ */
 
 /* â”€â”€ variables de diseÃ±o â”€â”€ */
 :root {
@@ -1895,6 +1895,37 @@ h1, h2, h3, h4 {
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(27, 59, 43, 0.3);
   background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+}
+
+.wa-btn.loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+  background: var(--primary) !important;
+  border-color: var(--primary-light);
+}
+
+.wa-btn.loading .wa-icon {
+  visibility: hidden;
+}
+
+.wa-btn.loading::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  left: 50%;
+  margin-top: -10px;
+  margin-left: -10px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: var(--accent);
+  animation: wa-spin 0.8s ease-in-out infinite;
+}
+
+@keyframes wa-spin {
+  to { transform: rotate(360deg); }
 }
 
 .wa-icon {
